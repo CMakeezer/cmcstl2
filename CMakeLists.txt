@@ -14,6 +14,7 @@ cmake_minimum_required(VERSION 3.8)
 
 project(cmcstl2 CXX)
 
+option(ENABLE_TEST "" OFF)
 add_library(stl2 INTERFACE)
 target_include_directories(stl2 INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -34,6 +35,8 @@ install(
 
 add_subdirectory(examples)
 
-enable_testing()
-include(CTest)
-add_subdirectory(test)
+if(ENABLE_TEST)
+	enable_testing()
+	include(CTest)
+	add_subdirectory(test)
+endif()
