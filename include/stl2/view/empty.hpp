@@ -17,28 +17,27 @@
 #include <stl2/view/view_interface.hpp>
 
 STL2_OPEN_NAMESPACE {
-	namespace ext {
-		template <_Is<std::is_object> T>
-		class empty_view : public view_interface<empty_view<T>> {
-		public:
-			using iterator = T*;
-			using const_iterator = T*;
-			using sentinel = T*;
-			using const_sentinel = T*;
-			constexpr static T* begin() noexcept
-			{ return nullptr; }
-			constexpr static T* end() noexcept
-			{ return nullptr; }
-			constexpr static ptrdiff_t size() noexcept
-			{ return 0; }
-			constexpr static T* data() noexcept
-			{ return nullptr; }
-		};
-	}
+	template<_Is<std::is_object> T>
+	class empty_view : public view_interface<empty_view<T>> {
+	public:
+		constexpr static T* begin() noexcept
+		{ return nullptr; }
+		constexpr static T* end() noexcept
+		{ return nullptr; }
+		constexpr static ptrdiff_t size() noexcept
+		{ return 0; }
+		constexpr static T* data() noexcept
+		{ return nullptr; }
+
+		friend T* begin(empty_view) noexcept
+		{ return nullptr; }
+		friend T* end(empty_view) noexcept
+		{ return nullptr; }
+	};
 
 	namespace view {
-		template <class T>
-		inline constexpr ext::empty_view<T> empty {};
+		template<class T>
+		inline constexpr empty_view<T> empty {};
 	}
 } STL2_CLOSE_NAMESPACE
 

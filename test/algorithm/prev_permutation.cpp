@@ -41,7 +41,7 @@ constexpr auto factorial(ranges::Integral x)
 	return r;
 }
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_iter()
 {
 	int ia[] = {6, 5, 4, 3, 2, 1};
@@ -68,7 +68,7 @@ void test_iter()
 	}
 }
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_range()
 {
 	int ia[] = {6, 5, 4, 3, 2, 1};
@@ -81,7 +81,7 @@ void test_range()
 		do
 		{
 			std::copy(ia, ia+e, prev);
-			x = ranges::prev_permutation(ranges::ext::subrange(Iter(ia), Sent(ia+e)));
+			x = ranges::prev_permutation(ranges::subrange(Iter(ia), Sent(ia+e)));
 			if(e > 1)
 			{
 				if(!x)
@@ -95,7 +95,7 @@ void test_range()
 	}
 }
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_iter_comp()
 {
 	typedef std::greater<int> C;
@@ -123,7 +123,7 @@ void test_iter_comp()
 	}
 }
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_range_comp()
 {
 	typedef std::greater<int> C;
@@ -137,7 +137,7 @@ void test_range_comp()
 		do
 		{
 			std::copy(ia, ia+e, prev);
-			x = ranges::prev_permutation(ranges::ext::subrange(Iter(ia), Sent(ia+e)), C());
+			x = ranges::prev_permutation(ranges::subrange(Iter(ia), Sent(ia+e)), C());
 			if(e > 1)
 			{
 				if(!x)
@@ -207,11 +207,11 @@ int main()
 	typedef std::less<int> C;
 	std::pair<int, c_str> ia[] = {{6, {"six"}}, {5,{"five"}}, {4,{"four"}}, {3,{"three"}}, {2,{"two"}}, {1,{"one"}}};
 	CHECK(ranges::prev_permutation(ia, C(), &std::pair<int,c_str>::first));
-	::check_equal<std::pair<int, c_str>>(ia, {{6, {"six"}}, {5,{"five"}}, {4,{"four"}}, {3,{"three"}}, {1,{"one"}}, {2,{"two"}}});
+	CHECK_EQUAL(ia, {std::pair<int, c_str>{6, {"six"}}, {5,{"five"}}, {4,{"four"}}, {3,{"three"}}, {1,{"one"}}, {2,{"two"}}});
 	CHECK(ranges::prev_permutation(ia, C(), &std::pair<int,c_str>::first));
-	::check_equal<std::pair<int, c_str>>(ia, {{6, {"six"}}, {5,{"five"}}, {4,{"four"}}, {2,{"two"}}, {3,{"three"}}, {1,{"one"}}});
+	CHECK_EQUAL(ia, {std::pair<int, c_str>{6, {"six"}}, {5,{"five"}}, {4,{"four"}}, {2,{"two"}}, {3,{"three"}}, {1,{"one"}}});
 	CHECK(ranges::prev_permutation(ia, C(), &std::pair<int,c_str>::first));
-	::check_equal<std::pair<int, c_str>>(ia, {{6, {"six"}}, {5,{"five"}}, {4,{"four"}}, {2,{"two"}}, {1,{"one"}}, {3,{"three"}}});
+	CHECK_EQUAL(ia, {std::pair<int, c_str>{6, {"six"}}, {5,{"five"}}, {4,{"four"}}, {2,{"two"}}, {1,{"one"}}, {3,{"three"}}});
 	// etc..
 
 	return ::test_result();

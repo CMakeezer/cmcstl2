@@ -34,16 +34,16 @@ namespace { std::mt19937 gen; }
 
 struct indirect_less
 {
-	template <class P>
+	template<class P>
 	bool operator()(const P& x, const P& y) const
 		{return *x < *y;}
 };
 
-template <class RI>
+template<class RI>
 void
 test_sort_helper(RI f, RI l)
 {
-	using value_type = stl2::value_type_t<RI>;
+	using value_type = stl2::iter_value_t<RI>;
 	auto stable_sort = make_testable_1<false>([](auto&&... args) {
 		return stl2::stable_sort(std::forward<decltype(args)>(args)...);
 	});
@@ -71,7 +71,7 @@ test_sort_helper(RI f, RI l)
 	}
 }
 
-template <class RI>
+template<class RI>
 void
 test_sort_driver_driver(RI f, RI l, int start, RI real_last)
 {
@@ -87,14 +87,14 @@ test_sort_driver_driver(RI f, RI l, int start, RI real_last)
 	}
 }
 
-template <class RI>
+template<class RI>
 void
 test_sort_driver(RI f, RI l, int start)
 {
 	test_sort_driver_driver(f, l, start, l);
 }
 
-template <int sa>
+template<int sa>
 void
 test_sort_()
 {

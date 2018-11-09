@@ -38,7 +38,7 @@ struct is_odd
 	bool operator()(const int& i) const {return i % 2 != 0;}
 };
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_iter()
 {
@@ -92,55 +92,55 @@ test_iter()
 	}
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_range()
 {
 	{
 		const int ia[] = {2, 4, 6, 8, 10};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::end(ia)))),
 									  is_odd()) == Iter(ia));
 	}
 	{
 		const int ia[] = {1, 2, 4, 6, 8};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::end(ia)))),
 									  is_odd()) == Iter(ia + 1));
 	}
 	{
 		const int ia[] = {1, 3, 2, 4, 6};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::end(ia)))),
 									  is_odd()) == Iter(ia + 2));
 	}
 	{
 		const int ia[] = {1, 3, 5, 2, 4, 6};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::end(ia)))),
 									  is_odd()) == Iter(ia + 3));
 	}
 	{
 		const int ia[] = {1, 3, 5, 7, 2, 4};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::end(ia)))),
 									  is_odd()) == Iter(ia + 4));
 	}
 	{
 		const int ia[] = {1, 3, 5, 7, 9, 2};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::end(ia)))),
 									  is_odd()) == Iter(ia + 5));
 	}
 	{
 		const int ia[] = {1, 3, 5, 7, 9, 11};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::end(ia)))),
 									  is_odd()) == Iter(ia + 6));
 	}
 	{
 		const int ia[] = {1, 3, 5, 2, 4, 6, 7};
-		CHECK(stl2::partition_point(::as_lvalue(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(::as_lvalue(stl2::subrange(Iter(stl2::begin(ia)),
 																Sent(stl2::begin(ia)))),
 									  is_odd()) == Iter(ia));
 	}
@@ -148,19 +148,19 @@ test_range()
 	// An rvalue range
 	{
 		const int ia[] = {1, 3, 5, 7, 9, 2};
-		CHECK(stl2::partition_point(stl2::ext::subrange(Iter(stl2::begin(ia)),
+		CHECK(stl2::partition_point(stl2::subrange(Iter(stl2::begin(ia)),
 														 Sent(stl2::end(ia))),
 									  is_odd()) == Iter(ia + 5));
 	}
 }
 
 stl2::Iterator{I}
-stl2::ext::subrange<stl2::counted_iterator<I>, stl2::default_sentinel>
-make_counted_view(I i, stl2::difference_type_t<I> n) {
+stl2::subrange<stl2::counted_iterator<I>, stl2::default_sentinel>
+make_counted_view(I i, stl2::iter_difference_t<I> n) {
   return {stl2::make_counted_iterator(stl2::move(i), n), {}};
 }
 
-template <class Iter>
+template<class Iter>
 void
 test_counted()
 {
@@ -234,7 +234,7 @@ int main()
 	CHECK(stl2::partition_point(ia, is_odd(), &S::i) == ia + 3);
 
 	// Test infinite range
-	CHECK(*stl2::partition_point(stl2::ext::iota_view<int>{0},
+	CHECK(*stl2::partition_point(stl2::iota_view<int>{0},
 								[](int i){ return i < 42; }).get_unsafe() == 42);
 
 	return ::test_result();

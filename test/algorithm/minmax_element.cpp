@@ -31,7 +31,7 @@ namespace stl2 = __stl2;
 
 namespace { std::mt19937 gen; }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_iter(Iter first, Sent last)
 {
@@ -50,7 +50,7 @@ test_iter(Iter first, Sent last)
 		CHECK(p.second == last);
 	}
 
-	auto rng = stl2::ext::subrange(first, last);
+	auto rng = stl2::subrange(first, last);
 	p = stl2::minmax_element(rng);
 	if (first != last)
 	{
@@ -82,7 +82,7 @@ test_iter(Iter first, Sent last)
 	}
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_iter(unsigned N)
 {
@@ -92,7 +92,7 @@ test_iter(unsigned N)
 	test_iter(Iter(a.get()), Sent(a.get()+N));
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_iter()
 {
@@ -113,7 +113,7 @@ test_iter()
 	}
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_iter_comp(Iter first, Sent last)
 {
@@ -134,7 +134,7 @@ test_iter_comp(Iter first, Sent last)
 		CHECK(p.second == last);
 	}
 
-	auto rng = stl2::ext::subrange(first, last);
+	auto rng = stl2::subrange(first, last);
 	p = stl2::minmax_element(rng, comp);
 	if (first != last)
 	{
@@ -166,7 +166,7 @@ test_iter_comp(Iter first, Sent last)
 	}
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_iter_comp(unsigned N)
 {
@@ -176,7 +176,7 @@ test_iter_comp(unsigned N)
 	test_iter_comp(Iter(a.get()), Sent(a.get()+N));
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_iter_comp()
 {

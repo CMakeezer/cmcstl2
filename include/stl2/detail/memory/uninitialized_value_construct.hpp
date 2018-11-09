@@ -13,7 +13,6 @@
 #ifndef STL2_DETAIL_MEMORY_UNINITIALIZED_VALUE_CONSTRUCT_HPP
 #define STL2_DETAIL_MEMORY_UNINITIALIZED_VALUE_CONSTRUCT_HPP
 
-#include <new>
 #include <stl2/iterator.hpp>
 #include <stl2/detail/fwd.hpp>
 #include <stl2/detail/memory/concepts.hpp>
@@ -25,10 +24,9 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// uninitialized_value_construct [Extension]
 	//
-	template <__NoThrowForwardIterator I, Sentinel<I> S>
+	template<__NoThrowForwardIterator I, Sentinel<I> S>
 	requires
-		DefaultConstructible<value_type_t<I>> &&
-		__ReferenceTo<I, value_type_t<I>>
+		DefaultConstructible<iter_value_t<I>>
 	I uninitialized_value_construct(I first, S last)
 	{
 		auto guard = detail::destroy_guard<I>{first};
@@ -42,10 +40,9 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// uninitialized_value_construct [Extension]
 	//
-	template <__NoThrowForwardRange Rng>
+	template<__NoThrowForwardRange Rng>
 	requires
-		DefaultConstructible<value_type_t<iterator_t<Rng>>> &&
-		__ReferenceTo<iterator_t<Rng>, value_type_t<iterator_t<Rng>>>
+		DefaultConstructible<iter_value_t<iterator_t<Rng>>>
 	safe_iterator_t<Rng> uninitialized_value_construct(Rng&& rng)
 	{
 		return __stl2::uninitialized_value_construct(__stl2::begin(rng), __stl2::end(rng));
@@ -54,11 +51,10 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// uninitialized_value_construct_n [Extension]
 	//
-	template <__NoThrowForwardIterator I>
+	template<__NoThrowForwardIterator I>
 	requires
-		DefaultConstructible<value_type_t<I>> &&
-		__ReferenceTo<I, value_type_t<I>>
-	I uninitialized_value_construct_n(I first, difference_type_t<I> n)
+		DefaultConstructible<iter_value_t<I>>
+	I uninitialized_value_construct_n(I first, iter_difference_t<I> n)
 	{
 		return __stl2::uninitialized_value_construct(
 			__stl2::make_counted_iterator(first, n),

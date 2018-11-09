@@ -32,7 +32,7 @@ namespace stl2 = __stl2;
 
 int comparison_count = 0;
 
-template <typename T>
+template<typename T>
 bool counting_equals( T const &a, T const &b )
 {
 	++comparison_count;
@@ -753,71 +753,71 @@ int main()
 								   sentinel<const int*>(ib + sa - 1)) == false);
 	}
 
-	// BoundedView tests, with sentinels:
+	// CommonView tests, with sentinels:
 	{
 		const int ia[] = {0, 1, 2, 3, 0, 5, 6, 2, 4, 4};
 		const int ib[] = {4, 2, 3, 0, 1, 4, 0, 5, 6, 2};
 		const unsigned sa = sizeof(ia)/sizeof(ia[0]);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
 								   forward_iterator<const int*>(ib)) == true);
 
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const int*>(ib),
+								   stl2::subrange(forward_iterator<const int*>(ib),
 								   sentinel<const int*>(ib + sa))) == true);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const int*>(ib + 1),
+								   stl2::subrange(forward_iterator<const int*>(ib + 1),
 								   sentinel<const int*>(ib + sa))) == false);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const int*>(ib),
+								   stl2::subrange(forward_iterator<const int*>(ib),
 								   sentinel<const int*>(ib + sa - 1))) == false);
 	}
 
-	// BoundedView tests, with sentinels, with predicate:
+	// CommonView tests, with sentinels, with predicate:
 	{
 		const int ia[] = {0, 1, 2, 3, 0, 5, 6, 2, 4, 4};
 		const int ib[] = {4, 2, 3, 0, 1, 4, 0, 5, 6, 2};
 		const unsigned sa = sizeof(ia)/sizeof(ia[0]);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
 								   forward_iterator<const int*>(ib),
 								   std::equal_to<int const>()) == true);
 
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const int*>(ib),
+								   stl2::subrange(forward_iterator<const int*>(ib),
 								   sentinel<const int*>(ib + sa)),
 								   std::equal_to<int const>()) == true);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const int*>(ib + 1),
+								   stl2::subrange(forward_iterator<const int*>(ib + 1),
 								   sentinel<const int*>(ib + sa)),
 								   std::equal_to<int const>()) == false);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const int*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const int*>(ia),
 								   sentinel<const int*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const int*>(ib),
+								   stl2::subrange(forward_iterator<const int*>(ib),
 								   sentinel<const int*>(ib + sa - 1)),
 								   std::equal_to<int const>()) == false);
 	}
 
-	// BoundedView tests, with sentinels, with predicate and projections:
+	// CommonView tests, with sentinels, with predicate and projections:
 	{
 		const S ia[] = {{0}, {1}, {2}, {3}, {0}, {5}, {6}, {2}, {4}, {4}};
 		const T ib[] = {{4}, {2}, {3}, {0}, {1}, {4}, {0}, {5}, {6}, {2}};
 		const unsigned sa = sizeof(ia)/sizeof(ia[0]);
 		CHECK(stl2::is_permutation(ia, &ib[0], std::equal_to<int const>(), &S::i, &T::i) == true);
 		CHECK(stl2::is_permutation(ia, ib, std::equal_to<int const>(), &S::i, &T::i) == true);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const S*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const S*>(ia),
 								   sentinel<const S*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const T*>(ib + 1),
+								   stl2::subrange(forward_iterator<const T*>(ib + 1),
 								   sentinel<const T*>(ib + sa)),
 								   std::equal_to<int const>(), &S::i, &T::i) == false);
-		CHECK(stl2::is_permutation(stl2::ext::subrange(forward_iterator<const S*>(ia),
+		CHECK(stl2::is_permutation(stl2::subrange(forward_iterator<const S*>(ia),
 								   sentinel<const S*>(ia + sa)),
-								   stl2::ext::subrange(forward_iterator<const T*>(ib),
+								   stl2::subrange(forward_iterator<const T*>(ib),
 								   sentinel<const T*>(ib + sa - 1)),
 								   std::equal_to<int const>(), &S::i, &T::i) == false);
 	}

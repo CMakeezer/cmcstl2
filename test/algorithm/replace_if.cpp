@@ -30,7 +30,7 @@
 
 namespace stl2 = __stl2;
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_iter()
 {
 	int ia[] = {0, 1, 2, 3, 4};
@@ -44,12 +44,12 @@ void test_iter()
 	CHECK(base(i) == ia + sa);
 }
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_rng()
 {
 	int ia[] = {0, 1, 2, 3, 4};
 	const unsigned sa = sizeof(ia)/sizeof(ia[0]);
-	auto rng = stl2::ext::subrange(Iter(ia), Sent(ia+sa));
+	auto rng = stl2::subrange(Iter(ia), Sent(ia+sa));
 	Iter i = stl2::replace_if(rng, [](int i){return i==2;}, 5);
 	CHECK(ia[0] == 0);
 	CHECK(ia[1] == 1);

@@ -20,7 +20,11 @@
 #include <stl2/detail/range/concepts.hpp>
 
 STL2_OPEN_NAMESPACE {
-	template <ext::CopyConstructibleObject T> // Not to spec
+	////////////////////////////////////////////////////////////////////////////
+ 	// dangling
+	// Not to spec: Kill it with fire.
+	//
+ 	template<ext::CopyConstructibleObject T>
 	class dangling {
 		T value;
 	public:
@@ -40,12 +44,11 @@ STL2_OPEN_NAMESPACE {
 		}
 	};
 
-	template <Range R, ext::CopyConstructibleObject U>
+	template<Range R, ext::CopyConstructibleObject U>
 	using __maybe_dangling =
 		meta::if_<meta::is_trait<meta::defer<__begin_t, R>>, U, dangling<U>>;
 
-	// Not to spec: permits rvalues so long as they work with __std2::begin
-	template <Range R>
+	template<Range R>
 	using safe_iterator_t = __maybe_dangling<R, iterator_t<R>>;
 
 } STL2_CLOSE_NAMESPACE

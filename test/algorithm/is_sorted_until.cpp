@@ -34,40 +34,44 @@
 namespace stl2 = __stl2;
 
 /// Calls the iterator interface of the algorithm
-template <class Iter>
+template<class Iter>
 struct iter_call
 {
 	using begin_t = Iter;
 	using sentinel_t = typename sentinel_type<Iter>::type;
 
-	template <class B, class E, class... Args>
-	auto operator()(B&& It, E&& e, Args&&... args)
-	 -> decltype(stl2::is_sorted_until(begin_t{It}, sentinel_t{e},
-										 std::forward<Args>(args)...))
+	template<class B, class E, class... Args>
+	requires requires(B&& It, E&& e, Args&&... args) {
+		stl2::is_sorted_until(begin_t{It}, sentinel_t{e},
+		                      std::forward<Args>(args)...);
+	}
+	begin_t operator()(B&& It, E&& e, Args&&... args)
 	{
 		return stl2::is_sorted_until(begin_t{It}, sentinel_t{e},
-									   std::forward<Args>(args)...);
+		                             std::forward<Args>(args)...);
 	}
 };
 
 /// Calls the range interface of the algorithm
-template <class Iter>
+template<class Iter>
 struct range_call
 {
 	using begin_t = Iter;
 	using sentinel_t = typename sentinel_type<Iter>::type;
 
-	template <class B, class E, class... Args>
-	auto operator()(B&& It, E&& e, Args&&... args)
-	 -> decltype(stl2::is_sorted_until(::as_lvalue(stl2::ext::subrange(begin_t{It}, sentinel_t{e})),
-										 std::forward<Args>(args)...))
+	template<class B, class E, class... Args>
+	requires requires(B&& It, E&& e, Args&&... args) {
+		stl2::is_sorted_until(::as_lvalue(stl2::subrange(begin_t{It}, sentinel_t{e})),
+		                      std::forward<Args>(args)...);
+	}
+	begin_t operator()(B&& It, E&& e, Args&&... args)
 	{
-		return stl2::is_sorted_until(::as_lvalue(stl2::ext::subrange(begin_t{It}, sentinel_t{e})),
-									   std::forward<Args>(args)...);
+		return stl2::is_sorted_until(::as_lvalue(stl2::subrange(begin_t{It}, sentinel_t{e})),
+		                             std::forward<Args>(args)...);
 	}
 };
 
-template <class It, template <class> class FunT>
+template<class It, template<class> class FunT>
 void test()
 {
 	using Fun = FunT<It>;

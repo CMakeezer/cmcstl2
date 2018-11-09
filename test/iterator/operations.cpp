@@ -17,7 +17,7 @@
 namespace ranges = std::experimental::ranges;
 
 namespace {
-    template <class T, std::size_t N, bool Bidi = true>
+    template<class T, std::size_t N, bool Bidi = true>
     struct unsized_range {
         T array_[N];
 
@@ -63,8 +63,8 @@ namespace {
         }
 
         {
-            auto rng = ranges::ext::take_exactly_view<ranges::ext::iota_view<int>>{{}, 42};
-            static_assert(ranges::models::RandomAccessRange<decltype(rng)>);
+            auto rng = ranges::ext::take_exactly_view<ranges::iota_view<int>>{{}, 42};
+            static_assert(ranges::RandomAccessRange<decltype(rng)>);
             auto pos = ranges::begin(rng);
             // advance(i, n)
             ranges::advance(pos, 1);
@@ -167,8 +167,8 @@ namespace {
         }
 
         {
-            auto rng = ranges::ext::take_exactly_view<ranges::ext::iota_view<int>>{{}, 42};
-            static_assert(ranges::models::RandomAccessRange<decltype(rng)>);
+            auto rng = ranges::ext::take_exactly_view<ranges::iota_view<int>>{{}, 42};
+            static_assert(ranges::RandomAccessRange<decltype(rng)>);
             // next(i, n)
             auto pos = ranges::next(ranges::begin(rng), 1);
             if (*pos != 1) return false;
@@ -257,8 +257,8 @@ namespace {
         }
 
         {
-            auto rng = ranges::ext::take_exactly_view<ranges::ext::iota_view<int>>{{}, 42};
-            static_assert(ranges::models::RandomAccessRange<decltype(rng)>);
+            auto rng = ranges::ext::take_exactly_view<ranges::iota_view<int>>{{}, 42};
+            static_assert(ranges::RandomAccessRange<decltype(rng)>);
             // prev(i, n)
             auto pos = ranges::prev(ranges::next(ranges::begin(rng), ranges::end(rng)), 1);
             if (pos != ranges::begin(rng) + 41) return false;
@@ -300,7 +300,7 @@ namespace {
         }
 
         {
-            auto rng = ranges::ext::take_exactly_view<ranges::ext::iota_view<int>>{{}, 42};
+            auto rng = ranges::ext::take_exactly_view<ranges::iota_view<int>>{{}, 42};
             if (ranges::distance(rng) != 42) return false;
             if (ranges::distance(ranges::begin(rng), ranges::end(rng)) != 42) return false;
             {

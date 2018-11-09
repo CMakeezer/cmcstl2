@@ -34,39 +34,42 @@
 namespace ranges = __stl2;
 
 /// Calls the iterator interface of the algorithm
-template <class Iter>
+template<class Iter>
 struct iter_call
 {
 	using begin_t = Iter;
 	using sentinel_t = typename sentinel_type<Iter>::type;
 
-	template <class B, class E, class... Args>
-	auto operator()(B &&b, E &&e, Args &&... args)
-	 -> decltype(ranges::is_sorted(begin_t{b}, sentinel_t{e},
-								   std::forward<Args>(args)...))
+	template<class B, class E, class... Args>
+	requires requires(B&& b, E&& e, Args&&... args) {
+		ranges::is_sorted(begin_t{b}, sentinel_t{e}, std::forward<Args>(args)...);
+	}
+	bool operator()(B&& b, E&& e, Args&&... args)
 	{
 		return ranges::is_sorted(begin_t{b}, sentinel_t{e}, std::forward<Args>(args)...);
 	}
 };
 
 /// Calls the range interface of the algorithm
-template <class Iter>
+template<class Iter>
 struct range_call
 {
 	using begin_t = Iter;
 	using sentinel_t = typename sentinel_type<Iter>::type;
 
-	template <class B, class E, class...  Args>
-	auto operator()(B &&b, E &&e, Args &&... args)
-	 -> decltype(ranges::is_sorted(ranges::ext::subrange(begin_t{b}, sentinel_t{e}),
-								   std::forward<Args>(args)...))
+	template<class B, class E, class...  Args>
+	requires requires(B&& b, E&& e, Args&&... args) {
+		ranges::is_sorted(ranges::subrange(begin_t{b}, sentinel_t{e}),
+		                  std::forward<Args>(args)...);
+	}
+	bool operator()(B&& b, E&& e, Args&&... args)
 	{
-		return ranges::is_sorted(ranges::ext::subrange(begin_t{b}, sentinel_t{e}),
-								 std::forward<Args>(args)...);
+		return ranges::is_sorted(ranges::subrange(begin_t{b}, sentinel_t{e}),
+		                         std::forward<Args>(args)...);
 	}
 };
 
-template <class Fun>
+template<class Fun>
 void test()
 {
 	{

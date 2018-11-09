@@ -29,7 +29,7 @@ STL2_OPEN_NAMESPACE {
 	// ostream_iterator [ostream.iterator]
 	// Extension: ostream_iterator<void> accepts any streamable type.
 	//
-	template <class T = void, class charT = char, class traits = std::char_traits<charT>>
+	template<class T = void, class charT = char, class traits = std::char_traits<charT>>
 	requires
 		Same<T, void> ||
 		StreamInsertable<T, charT, traits>
@@ -46,7 +46,7 @@ STL2_OPEN_NAMESPACE {
 			ostream_type& os, const charT* delimiter = nullptr) noexcept
 		: out_stream_(detail::addressof(os)), delim_(delimiter) {}
 
-		template <class U, class V = meta::if_<std::is_void<T>, U, T>>
+		template<class U, class V = meta::if_<std::is_void<T>, U, T>>
 		requires
 			ConvertibleTo<U, V const&> &&
 			StreamInsertable<V, charT, traits>
@@ -64,8 +64,6 @@ STL2_OPEN_NAMESPACE {
 		ostream_iterator& operator++() noexcept {
 			return *this;
 		}
-		// Not to spec:
-		// https://github.com/ericniebler/stl2/issues/232
 		ostream_iterator& operator++(int) noexcept {
 			return *this;
 		}

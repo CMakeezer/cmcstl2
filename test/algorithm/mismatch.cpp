@@ -25,12 +25,9 @@
 #include "../test_utils.hpp"
 #include "../test_iterators.hpp"
 
-namespace ranges {
-	using namespace __stl2;
-	using __stl2::ext::subrange;
-}
+namespace ranges = __stl2;
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_iter()
 {
 	int ia[] = {0, 1, 2, 2, 0, 1, 2, 3};
@@ -52,7 +49,7 @@ void test_iter()
 						   Pair{Iter(ia+2),Iter(ib+2)});
 }
 
-template <typename Iter, typename Sent = Iter>
+template<typename Iter, typename Sent = Iter>
 void test_range()
 {
 	int ia[] = {0, 1, 2, 2, 0, 1, 2, 3};
@@ -148,7 +145,7 @@ int main()
 	}
 	{
 		std::pair<S const *, S const *> ps2
-			= ranges::mismatch(ranges::begin(s1), ranges::end(s2), s2, std::equal_to<int>(), &S::i, &S::i);
+			= ranges::mismatch(ranges::begin(s1), ranges::end(s1), s2, std::equal_to<int>(), &S::i, &S::i);
 		CHECK(ps2.first->i == -4);
 		CHECK(ps2.second->i == 5);
 	}

@@ -20,7 +20,7 @@
 // replace_copy [alg.replace]
 //
 STL2_OPEN_NAMESPACE {
-	template <InputIterator I, Sentinel<I> S, class T1, class T2,
+	template<InputIterator I, Sentinel<I> S, class T1, class T2,
 		OutputIterator<const T2&> O, class Proj = identity>
 	requires
 		IndirectlyCopyable<I, O> &&
@@ -31,17 +31,17 @@ STL2_OPEN_NAMESPACE {
 		const T2& new_value, Proj proj = Proj{})
 	{
 		for (; first != last; ++first, ++result) {
-			reference_t<I>&& v = *first;
+			iter_reference_t<I>&& v = *first;
 			if (__stl2::invoke(proj, v) == old_value) {
 				*result = new_value;
 			} else {
-				*result = std::forward<reference_t<I>>(v);
+				*result = std::forward<iter_reference_t<I>>(v);
 			}
 		}
 		return {std::move(first), std::move(result)};
 	}
 
-	template <InputRange Rng, class T1, class T2, class O, class Proj = identity>
+	template<InputRange Rng, class T1, class T2, class O, class Proj = identity>
 	requires
 		OutputIterator<__f<O>, const T2&> &&
 		IndirectlyCopyable<iterator_t<Rng>, __f<O>> &&

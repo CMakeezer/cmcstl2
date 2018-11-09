@@ -24,7 +24,7 @@
 
 STL2_OPEN_NAMESPACE {
 	namespace ext {
-		template <View Rng>
+		template<View Rng>
 		requires InputRange<Rng>
 		class move_view : detail::ebo_box<Rng, move_view<Rng>>
 						, public view_interface<move_view<Rng>> {
@@ -44,7 +44,7 @@ STL2_OPEN_NAMESPACE {
 			requires Range<const Rng>
 			{ return __stl2::make_move_sentinel(__stl2::end(get())); }
 			move_iterator<iterator_t<Rng>> end() const
-			requires Range<const Rng> && BoundedRange<const Rng>
+			requires Range<const Rng> && CommonRange<const Rng>
 			{ return __stl2::make_move_iterator(__stl2::end(get())); }
 
 			auto size() const
@@ -61,7 +61,7 @@ STL2_OPEN_NAMESPACE {
 			requires !Range<const Rng>
 			{ return __stl2::make_move_sentinel(__stl2::end(get())); }
 			move_iterator<iterator_t<Rng>> end()
-			requires !Range<const Rng> && BoundedRange<Rng>
+			requires !Range<const Rng> && CommonRange<Rng>
 			{ return __stl2::make_move_iterator(__stl2::end(get())); }
 
 			auto size()
@@ -73,23 +73,21 @@ STL2_OPEN_NAMESPACE {
 		};
 	} // namespace ext
 
-	template <class V>
-	struct enable_view<ext::move_view<V>> : std::true_type {};
+	template<class V>
+	inline constexpr bool enable_view<ext::move_view<V>> = true;
 
-	namespace __move {
-		struct fn : detail::__pipeable<fn> {
-			template <InputRange Rng>
-			requires ext::ViewableRange<Rng>
-			constexpr ext::move_view<ext::all_view<Rng>> operator()(Rng&& rng) const {
-				return ext::move_view<ext::all_view<Rng>>{
+	namespace view {
+		struct __move_fn : detail::__pipeable<__move_fn> {
+			template<InputRange Rng>
+			requires ViewableRange<Rng>
+			constexpr __stl2::ext::move_view<all_view<Rng>> operator()(Rng&& rng) const {
+				return __stl2::ext::move_view<all_view<Rng>>{
 					view::all(std::forward<Rng>(rng))};
 			}
 		};
-	} // namespace __move
 
-	namespace view {
-		inline constexpr __move::fn move {};
-	}
+		inline constexpr __move_fn move {};
+	} // namespace view
 } STL2_CLOSE_NAMESPACE
 
 #endif

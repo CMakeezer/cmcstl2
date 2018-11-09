@@ -51,12 +51,12 @@
 STL2_OPEN_NAMESPACE {
 	namespace detail {
 		namespace ssort {
-			template <class I>
-			using buf_t = temporary_buffer<value_type_t<I>>;
+			template<class I>
+			using buf_t = temporary_buffer<iter_value_t<I>>;
 
 			constexpr int merge_sort_chunk_size = 7;
 
-			template <RandomAccessIterator I, class C, class P>
+			template<RandomAccessIterator I, class C, class P>
 			requires
 				Sortable<I, C, P>
 			void inplace_stable_sort(I first, I last, C &pred, P &proj)
@@ -64,7 +64,7 @@ STL2_OPEN_NAMESPACE {
 				if (last - first < 15) {
 					rsort::insertion_sort(first, last, pred, proj);
 				} else {
-					I middle = first + difference_type_t<I>(last - first) / 2;
+					I middle = first + iter_difference_t<I>(last - first) / 2;
 					ssort::inplace_stable_sort(first, middle, pred, proj);
 					ssort::inplace_stable_sort(middle, last, pred, proj);
 					detail::inplace_merge_no_buffer(first, middle, last,
@@ -73,13 +73,13 @@ STL2_OPEN_NAMESPACE {
 				}
 			}
 
-			template <RandomAccessIterator I, WeaklyIncrementable O, class C, class P>
+			template<RandomAccessIterator I, WeaklyIncrementable O, class C, class P>
 			requires
 				Sortable<I, C, P>
 			void merge_sort_loop(I first, I last, O result,
-				difference_type_t<I> step_size, C &pred, P &proj)
+				iter_difference_t<I> step_size, C &pred, P &proj)
 			{
-				auto two_step = difference_type_t<I>(2 * step_size);
+				auto two_step = iter_difference_t<I>(2 * step_size);
 				while (last - first >= two_step) {
 					result = __stl2::merge(
 						__stl2::make_move_iterator(first),
@@ -90,7 +90,7 @@ STL2_OPEN_NAMESPACE {
 						std::ref(proj), std::ref(proj)).out();
 					first += two_step;
 				}
-				step_size = __stl2::min(difference_type_t<I>(last - first), step_size);
+				step_size = __stl2::min(iter_difference_t<I>(last - first), step_size);
 				__stl2::merge(
 					__stl2::make_move_iterator(first),
 					__stl2::make_move_iterator(first + step_size),
@@ -100,10 +100,10 @@ STL2_OPEN_NAMESPACE {
 					std::ref(proj), std::ref(proj));
 			}
 
-			template <RandomAccessIterator I, class C, class P>
+			template<RandomAccessIterator I, class C, class P>
 			requires
 				Sortable<I, C, P>
-			void chunk_insertion_sort(I first, I last, difference_type_t<I> chunk_size,
+			void chunk_insertion_sort(I first, I last, iter_difference_t<I> chunk_size,
 				C &comp, P &proj)
 			{
 				while (last - first >= chunk_size) {
@@ -113,18 +113,18 @@ STL2_OPEN_NAMESPACE {
 				rsort::insertion_sort(first, last, comp, proj);
 			}
 
-			template <RandomAccessIterator I, class C, class P>
+			template<RandomAccessIterator I, class C, class P>
 			requires
 				Sortable<I, C, P>
 			void merge_sort_with_buffer(I first, I last, buf_t<I>& buf, C &comp, P &proj)
 			{
-				auto len = difference_type_t<I>(last - first);
-				auto step_size = difference_type_t<I>(merge_sort_chunk_size);
+				auto len = iter_difference_t<I>(last - first);
+				auto step_size = iter_difference_t<I>(merge_sort_chunk_size);
 				ssort::chunk_insertion_sort(first, last, step_size, comp, proj);
 				if (step_size >= len) {
 					return;
 				}
-				temporary_vector<value_type_t<I>> vec{buf};
+				temporary_vector<iter_value_t<I>> vec{buf};
 				ssort::merge_sort_loop(first, last, __stl2::back_inserter(vec), step_size, comp, proj);
 				step_size *= 2;
 				while (true) {
@@ -138,12 +138,12 @@ STL2_OPEN_NAMESPACE {
 				}
 			}
 
-			template <RandomAccessIterator I, class C, class P>
+			template<RandomAccessIterator I, class C, class P>
 			requires
 				Sortable<I, C, P>
 			void stable_sort_adaptive(I first, I last, buf_t<I>& buf, C &comp, P &proj)
 			{
-				auto len = difference_type_t<I>((last - first + 1) / 2);
+				auto len = iter_difference_t<I>((last - first + 1) / 2);
 				auto middle = first + len;
 				if (len > buf.size()) {
 					ssort::stable_sort_adaptive(first, middle, buf, comp, proj);
@@ -160,7 +160,7 @@ STL2_OPEN_NAMESPACE {
 	}
 
 	// Extension: Supports forward iterators.
-	template <class I, class S, class Comp = less<>, class Proj = identity>
+	template<class I, class S, class Comp = less<>, class Proj = identity>
 	requires
 		Sentinel<__f<S>, I> &&
 		Sortable<I, Comp, Proj>
@@ -171,7 +171,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(comp), std::ref(proj));
 	}
 
-	template <RandomAccessIterator I, class S, class Comp = less<>,
+	template<RandomAccessIterator I, class S, class Comp = less<>,
 						class Proj = identity>
 	requires
 		Sentinel<__f<S>, I> &&
@@ -179,7 +179,7 @@ STL2_OPEN_NAMESPACE {
 	I stable_sort(I first, S&& last_, Comp comp = Comp{}, Proj proj = Proj{})
 	{
 		auto last = __stl2::next(first, std::forward<S>(last_));
-		auto len = difference_type_t<I>(last - first);
+		auto len = iter_difference_t<I>(last - first);
 		using buf_t = detail::ssort::buf_t<I>;
 		auto buf = len > 256 ? buf_t{len} : buf_t{};
 		if (!buf.size_) {
@@ -191,7 +191,7 @@ STL2_OPEN_NAMESPACE {
 	}
 
 	// Extension: supports forward ranges.
-	template <ForwardRange Rng, class Comp = less<>, class Proj = identity>
+	template<ForwardRange Rng, class Comp = less<>, class Proj = identity>
 	requires
 		Sortable<iterator_t<Rng>, Comp, Proj>
 	safe_iterator_t<Rng>
@@ -201,7 +201,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(comp), std::ref(proj));
 	}
 
-	template <RandomAccessRange Rng, class Comp = less<>, class Proj = identity>
+	template<RandomAccessRange Rng, class Comp = less<>, class Proj = identity>
 	requires
 		Sortable<iterator_t<Rng>, Comp, Proj>
 	safe_iterator_t<Rng>

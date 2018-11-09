@@ -36,7 +36,7 @@ namespace { std::mt19937 gen; }
 // BUGBUG
 namespace std
 {
-	template <typename F, typename S>
+	template<typename F, typename S>
 	std::ostream & operator<<(std::ostream &sout, std::pair<F,S> const & p)
 	{
 		return sout << '[' << p.first << ',' << p.second << ']';
@@ -45,7 +45,7 @@ namespace std
 
 struct first
 {
-	template <typename P>
+	template<typename P>
 	int operator()(P const & p) const
 	{
 		return p.first;
@@ -54,16 +54,16 @@ struct first
 
 struct indirect_less
 {
-	template <class P>
+	template<class P>
 	bool operator()(const P& x, const P& y) const
 		{return *x < *y;}
 };
 
-template <class RI>
+template<class RI>
 void
 test_sort_helper(RI f, RI l)
 {
-	using value_type = stl2::value_type_t<RI>;
+	using value_type = stl2::iter_value_t<RI>;
 	auto sort = make_testable_1<false>([](auto&&... args) {
 		return stl2::sort(std::forward<decltype(args)>(args)...);
 	});
@@ -91,7 +91,7 @@ test_sort_helper(RI f, RI l)
 	}
 }
 
-template <class RI>
+template<class RI>
 void
 test_sort_driver_driver(RI f, RI l, int start, RI real_last)
 {
@@ -107,14 +107,14 @@ test_sort_driver_driver(RI f, RI l, int start, RI real_last)
 	}
 }
 
-template <class RI>
+template<class RI>
 void
 test_sort_driver(RI f, RI l, int start)
 {
 	test_sort_driver_driver(f, l, start, l);
 }
 
-template <int sa>
+template<int sa>
 void
 test_sort_()
 {
@@ -305,15 +305,15 @@ int main()
 		auto v1 = ranges::to_<std::vector<Int>>(
 			{1,2,2,3,3,3,4,4,4,4,5,5,5,5,5});
 		auto rng = view::zip(v0, v1);
-		::check_equal(v0,{5,5,5,5,5,4,4,4,4,3,3,3,2,2,1});
-		::check_equal(v1,{1,2,2,3,3,3,4,4,4,4,5,5,5,5,5});
+		CHECK_EQUAL(v0,{5,5,5,5,5,4,4,4,4,3,3,3,2,2,1});
+		CHECK_EQUAL(v1,{1,2,2,3,3,3,4,4,4,4,5,5,5,5,5});
 		using Rng = decltype(rng);
 		using CR = range_common_reference_t<Rng>;
 		auto proj = [](CR r) { return r; };
 		auto pred = [](CR r1, CR r2) { return r1 < r2; };
 		sort(rng, pred, proj);
-		::check_equal(v0,{1,2,2,3,3,3,4,4,4,4,5,5,5,5,5});
-		::check_equal(v1,{5,5,5,4,5,5,3,4,4,4,1,2,2,3,3});
+		CHECK_EQUAL(v0,{1,2,2,3,3,3,4,4,4,4,5,5,5,5,5});
+		CHECK_EQUAL(v1,{5,5,5,4,5,5,3,4,4,4,1,2,2,3,3});
 
 		// Check that this compiles, too:
 		sort(rng);

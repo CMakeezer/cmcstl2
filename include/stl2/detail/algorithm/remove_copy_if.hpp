@@ -23,7 +23,7 @@
 // remove_copy_if [alg.remove]
 //
 STL2_OPEN_NAMESPACE {
-	template <InputIterator I, Sentinel<I> S, WeaklyIncrementable O, class Pred,
+	template<InputIterator I, Sentinel<I> S, WeaklyIncrementable O, class Pred,
 		class Proj = identity>
 	requires
 		IndirectlyCopyable<I, O> &&
@@ -33,16 +33,16 @@ STL2_OPEN_NAMESPACE {
 	remove_copy_if(I first, S last, O result, Pred pred, Proj proj = Proj{})
 	{
 		for (; first != last; ++first) {
-			reference_t<I>&& v = *first;
+			iter_reference_t<I>&& v = *first;
 			if (!__stl2::invoke(pred, __stl2::invoke(proj, v))) {
-				*result = std::forward<reference_t<I>>(v);
+				*result = std::forward<iter_reference_t<I>>(v);
 				++result;
 			}
 		}
 		return {std::move(first), std::move(result)};
 	}
 
-	template <InputRange Rng, class O, class Pred, class Proj = identity>
+	template<InputRange Rng, class O, class Pred, class Proj = identity>
 	requires
 		WeaklyIncrementable<__f<O>> &&
 		IndirectlyCopyable<iterator_t<Rng>, __f<O>> &&

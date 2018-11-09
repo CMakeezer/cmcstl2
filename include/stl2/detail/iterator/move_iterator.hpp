@@ -28,11 +28,11 @@ STL2_OPEN_NAMESPACE {
 		InputIterator{I} class cursor;
 
 		struct access {
-			template <_SpecializationOf<cursor> C>
+			template<_SpecializationOf<cursor> C>
 			static constexpr decltype(auto) current(C&& c) noexcept {
 				return (std::forward<C>(c).current_);
 			}
-			template <_SpecializationOf<move_sentinel> MS>
+			template<_SpecializationOf<move_sentinel> MS>
 			static constexpr decltype(auto) sentinel(MS&& ms) noexcept {
 				return std::forward<MS>(ms).get();
 			}
@@ -43,9 +43,9 @@ STL2_OPEN_NAMESPACE {
 			friend access;
 			I current_{};
 		public:
-			using difference_type = difference_type_t<I>;
-			using value_type = value_type_t<I>;
-			using single_pass = meta::bool_<!models::ForwardIterator<I>>;
+			using difference_type = iter_difference_t<I>;
+			using value_type = iter_value_t<I>;
+			using single_pass = meta::bool_<!ForwardIterator<I>>;
 
 			class mixin : protected basic_mixin<cursor> {
 				using base_t = basic_mixin<cursor>;
@@ -54,7 +54,7 @@ STL2_OPEN_NAMESPACE {
 				using difference_type = cursor::difference_type;
 				using value_type = cursor::value_type;
 				using iterator_category = input_iterator_tag;
-				using reference = rvalue_reference_t<I>;
+				using reference = iter_rvalue_reference_t<I>;
 
 				constexpr mixin() = default;
 				constexpr explicit mixin(I&& i)
@@ -83,13 +83,13 @@ STL2_OPEN_NAMESPACE {
 			noexcept(is_nothrow_copy_constructible<I>::value)
 			: current_{i}
 			{}
-			template <ConvertibleTo<I> U>
+			template<ConvertibleTo<I> U>
 			constexpr cursor(const cursor<U>& u)
 			noexcept(is_nothrow_constructible<I, const U&>::value)
 			: current_{access::current(u)}
 			{}
 
-			constexpr rvalue_reference_t<I> read() const
+			constexpr iter_rvalue_reference_t<I> read() const
 			STL2_NOEXCEPT_RETURN(
 				__stl2::iter_move(current_)
 			)
@@ -106,7 +106,7 @@ STL2_OPEN_NAMESPACE {
 			using __postinc_t = std::decay_t<decltype(current_++)>;
 			Readable{R}
 			struct __proxy {
-				using value_type = __stl2::value_type_t<R>;
+				using value_type = __stl2::iter_value_t<R>;
 				R __tmp;
 				constexpr decltype(auto) operator*()
 				STL2_NOEXCEPT_RETURN(
@@ -119,7 +119,7 @@ STL2_OPEN_NAMESPACE {
 			};
 
 #if STL2_WORKAROUND_GCC_69096
-			template <class = void>
+			template<class = void>
 #endif // STL2_WORKAROUND_GCC_69096
 			constexpr auto post_increment()
 			noexcept(noexcept(__proxy<__postinc_t>{current_++}))
@@ -134,7 +134,7 @@ STL2_OPEN_NAMESPACE {
 				--current_;
 			}
 
-			constexpr void advance(difference_type_t<I> n)
+			constexpr void advance(iter_difference_t<I> n)
 			noexcept(noexcept(current_ += n))
 			requires RandomAccessIterator<I>
 			{
@@ -153,13 +153,13 @@ STL2_OPEN_NAMESPACE {
 				current_ == access::sentinel(that)
 			)
 
-			constexpr difference_type_t<I>
+			constexpr iter_difference_t<I>
 			distance_to(const cursor<SizedSentinel<I> >& that) const
 			STL2_NOEXCEPT_RETURN(
 				access::current(that) - current_
 			)
 
-			constexpr difference_type_t<I>
+			constexpr iter_difference_t<I>
 			distance_to(const move_sentinel<SizedSentinel<I> >& that) const
 			STL2_NOEXCEPT_RETURN(
 				access::sentinel(that) - current_
@@ -180,19 +180,14 @@ STL2_OPEN_NAMESPACE {
 		};
 	}
 
-	// Not to spec:
-	// * uses iter_move in operator* (See https://github.com/ericniebler/stl2/issues/244)
-	// * hooks iter_move and iter_swap (See https://github.com/ericniebler/stl2/issues/245)
-	// * constexpr per P0579
 	InputIterator{I}
 	using move_iterator = basic_iterator<__move_iterator::cursor<I>>;
 
-	template <class I>
+	template<class I>
 	struct iterator_category<move_iterator<I>> {
 		using type = input_iterator_tag;
 	};
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool
 	operator<(const move_iterator<I1>& a, const move_iterator<I2>& b)
@@ -201,7 +196,6 @@ STL2_OPEN_NAMESPACE {
 			__move_iterator::access::current(__stl2::get_cursor(b))
 	)
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool
 	operator>(const move_iterator<I1>& a, const move_iterator<I2>& b)
@@ -209,7 +203,6 @@ STL2_OPEN_NAMESPACE {
 		b < a
 	)
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool
 	operator<=(const move_iterator<I1>& a, const move_iterator<I2>& b)
@@ -217,7 +210,6 @@ STL2_OPEN_NAMESPACE {
 		!(b < a)
 	)
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool
 	operator>=(const move_iterator<I1>& a, const move_iterator<I2>& b)
@@ -225,8 +217,7 @@ STL2_OPEN_NAMESPACE {
 		!(a < b)
 	)
 
-	// Not to spec: constexpr per P0579
-	template <class I>
+	template<class I>
 	requires
 		InputIterator<__f<I>>
 	constexpr auto make_move_iterator(I&& i)
@@ -234,7 +225,6 @@ STL2_OPEN_NAMESPACE {
 		move_iterator<__f<I>>{std::forward<I>(i)}
 	)
 
-	// Not to spec: constexpr per P0579
 	Semiregular{S}
 	class move_sentinel : detail::ebo_box<S, move_sentinel<S>> {
 		friend __move_iterator::access;
@@ -248,13 +238,15 @@ STL2_OPEN_NAMESPACE {
 		noexcept(is_nothrow_move_constructible<S>::value)
 		: box_t(std::move(s))
 		{}
-		template <ConvertibleTo<S> T>
+		template<class T>
+		requires ConvertibleTo<const T&, S>
 		constexpr move_sentinel(const move_sentinel<T>& s)
 		noexcept(is_nothrow_constructible<S, const T&>::value)
 		: box_t{__move_iterator::access::sentinel(s)}
 		{}
 
-		template <ConvertibleTo<S> T>
+		template<class T>
+		requires Assignable<S&, const T&>
 		constexpr move_sentinel& operator=(const move_sentinel<T>& s) &
 		noexcept(is_nothrow_assignable<S&, const T&>::value)
 		{
@@ -267,8 +259,7 @@ STL2_OPEN_NAMESPACE {
 		{ return box_t::get(); }
 	};
 
-	// Not to spec: constexpr per P0579
-	template <class S>
+	template<class S>
 	requires
 		Semiregular<__f<S>>
 	constexpr auto make_move_sentinel(S&& s)

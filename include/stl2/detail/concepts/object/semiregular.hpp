@@ -23,10 +23,8 @@
 STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// CopyConstructible [concepts.lib.object.copyconstructible]
-	// Not to spec
-	// https://github.com/ericniebler/stl2/issues/301
-	// https://github.com/ericniebler/stl2/issues/313
-	template <class T>
+	//
+	template<class T>
 	concept bool CopyConstructible =
 		MoveConstructible<T> &&
 		Constructible<T, T&> &&
@@ -36,42 +34,21 @@ STL2_OPEN_NAMESPACE {
 		ConvertibleTo<const T&, T> &&
 		ConvertibleTo<const T, T>;
 
-	namespace models {
-		template <class>
-		constexpr bool CopyConstructible = false;
-		__stl2::CopyConstructible{T}
-		constexpr bool CopyConstructible<T> = true;
-	}
-
 	///////////////////////////////////////////////////////////////////////////
 	// Copyable [concepts.lib.object.copyable]
 	//
-	template <class T>
+	template<class T>
 	concept bool Copyable =
 		CopyConstructible<T> &&
 		Movable<T> &&
 		Assignable<T&, const T&>;
 
-	namespace models {
-		template <class>
-		constexpr bool Copyable = false;
-		__stl2::Copyable{T}
-		constexpr bool Copyable<T> = true;
-	}
-
 	///////////////////////////////////////////////////////////////////////////
 	// Semiregular [concepts.lib.object.semiregular]
 	//
-	template <class T>
+	template<class T>
 	concept bool Semiregular =
 		Copyable<T> && DefaultConstructible<T>;
-
-	namespace models {
-		template <class>
-		constexpr bool Semiregular = false;
-		__stl2::Semiregular{T}
-		constexpr bool Semiregular<T> = true;
-	}
 } STL2_CLOSE_NAMESPACE
 
 #endif

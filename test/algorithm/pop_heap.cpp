@@ -76,14 +76,14 @@ void test_3(int N)
 	std::make_heap(ia, ia+N);
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(::as_lvalue(stl2::ext::subrange(ia, ia+i))) == ia+i);
+		CHECK(stl2::pop_heap(::as_lvalue(stl2::subrange(ia, ia+i))) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1));
 	}
 	std::shuffle(ia, ia+N, gen);
 	std::make_heap(ia, ia+N);
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(stl2::ext::subrange(ia, ia+i)) == ia+i);
+		CHECK(stl2::pop_heap(stl2::subrange(ia, ia+i)) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1));
 	}
 	CHECK(stl2::pop_heap(ia, ia) == ia);
@@ -99,14 +99,14 @@ void test_4(int N)
 	std::make_heap(ia, ia+N);
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(::as_lvalue(stl2::ext::subrange(ia, sentinel<int*>(ia+i)))) == ia+i);
+		CHECK(stl2::pop_heap(::as_lvalue(stl2::subrange(ia, sentinel<int*>(ia+i)))) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1));
 	}
 	std::shuffle(ia, ia+N, gen);
 	std::make_heap(ia, ia+N);
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(stl2::ext::subrange(ia, sentinel<int*>(ia+i))) == ia+i);
+		CHECK(stl2::pop_heap(stl2::subrange(ia, sentinel<int*>(ia+i))) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1));
 	}
 	CHECK(stl2::pop_heap(ia, ia) == ia);
@@ -154,14 +154,14 @@ void test_7(int N)
 	std::make_heap(ia, ia+N, std::greater<int>());
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(::as_lvalue(stl2::ext::subrange(ia, ia+i)), std::greater<int>()) == ia+i);
+		CHECK(stl2::pop_heap(::as_lvalue(stl2::subrange(ia, ia+i)), std::greater<int>()) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1, std::greater<int>()));
 	}
 	std::shuffle(ia, ia+N, gen);
 	std::make_heap(ia, ia+N, std::greater<int>());
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(stl2::ext::subrange(ia, ia+i), std::greater<int>()) == ia+i);
+		CHECK(stl2::pop_heap(stl2::subrange(ia, ia+i), std::greater<int>()) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1, std::greater<int>()));
 	}
 	CHECK(stl2::pop_heap(ia, ia, std::greater<int>()) == ia);
@@ -177,14 +177,14 @@ void test_8(int N)
 	std::make_heap(ia, ia+N, std::greater<int>());
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(::as_lvalue(stl2::ext::subrange(ia, sentinel<int*>(ia+i))), std::greater<int>()) == ia+i);
+		CHECK(stl2::pop_heap(::as_lvalue(stl2::subrange(ia, sentinel<int*>(ia+i))), std::greater<int>()) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1, std::greater<int>()));
 	}
 	std::shuffle(ia, ia+N, gen);
 	std::make_heap(ia, ia+N, std::greater<int>());
 	for (int i = N; i > 0; --i)
 	{
-		CHECK(stl2::pop_heap(stl2::ext::subrange(ia, sentinel<int*>(ia+i)), std::greater<int>()) == ia+i);
+		CHECK(stl2::pop_heap(stl2::subrange(ia, sentinel<int*>(ia+i)), std::greater<int>()) == ia+i);
 		CHECK(std::is_heap(ia, ia+i-1, std::greater<int>()));
 	}
 	CHECK(stl2::pop_heap(ia, sentinel<int*>(ia), std::greater<int>()) == ia);
@@ -193,7 +193,7 @@ void test_8(int N)
 
 struct indirect_less
 {
-	template <class P>
+	template<class P>
 	bool operator()(const P& x, const P& y) const
 		{return *x < *y;}
 };
@@ -213,10 +213,10 @@ void test_9(int N)
 	delete [] ia;
 }
 
-template <typename T>
+template<typename T>
 struct construct
 {
-	template <typename ...Us>
+	template<typename ...Us>
 	T operator()(Us &&... us) const
 	{
 		return T{((Us &&)us)...};

@@ -16,55 +16,21 @@
 #include <range/v3/utility/iterator_concepts.hpp>
 #include <range/v3/utility/iterator_traits.hpp>
 
-namespace models {
-	template <class... Ts>
-	constexpr bool Same = ranges::Same<Ts...>;
-
-	template <class R>
-	constexpr bool Readable = ranges::Readable<R>;
-
-	template <class W, class T>
-	constexpr bool Writable = ranges::Writable<W, T>;
-
-	template <class I>
-	constexpr bool WeaklyIncrementable =
-		ranges::WeaklyIncrementable<I>;
-
-	template <class I>
-	constexpr bool Incrementable = ranges::Incrementable<I>;
-
-	template <class I>
-	constexpr bool WeakIterator = ranges::WeakIterator<I>;
-
-	template <class I>
-	constexpr bool Iterator = ranges::Iterator<I>;
-
-	template <class I>
-	constexpr bool InputIterator = ranges::InputIterator<I>;
-
-	template <class S, class I>
-	constexpr bool Sentinel = ranges::IteratorRange<I, S>;
-
-	template <class F, class... Is>
-	constexpr bool IndirectInvocable =
-		ranges::IndirectInvocable<F, Is...>;
-}
-
 namespace ns {
-	template <class I>
-	using difference_type_t = ranges::iterator_difference_t<I>;
+	template<class I>
+	using iter_difference_t = ranges::iterator_difference_t<I>;
 
-	template <class I>
+	template<class I>
 	using iterator_category_t = ranges::iterator_category_t<I>;
 
-	template <class I>
-	using reference_t = ranges::iterator_reference_t<I>;
+	template<class I>
+	using iter_reference_t = ranges::iterator_reference_t<I>;
 
-	template <class I>
-	using rvalue_reference_t = ranges::iterator_rvalue_reference_t<I>;
+	template<class I>
+	using iter_rvalue_reference_t = ranges::iterator_rvalue_reference_t<I>;
 
-	template <class I>
-	using value_type_t = ranges::iterator_value_t<I>;
+	template<class I>
+	using iter_value_t = ranges::iterator_value_t<I>;
 
 	using ranges::value_type;
 	using ranges::difference_type;
@@ -75,7 +41,7 @@ namespace ns {
 	using ranges::bidirectional_iterator_tag;
 	using ranges::random_access_iterator_tag;
 
-	using ranges::indirect_result_of_t;
+	using ranges::indirect_result_t;
 }
 
 #elif VALIDATE_STL2
@@ -90,7 +56,7 @@ namespace ns = ::__stl2;
 #include <memory>
 #include <type_traits>
 
-#include <meta/meta.hpp>
+#include <stl2/meta/meta.hpp>
 
 #include "../simple_test.hpp"
 
@@ -98,53 +64,53 @@ namespace associated_type_test {
 	struct A { using value_type = int; int& operator*() const; };
 	struct B : A { using value_type = double; };
 
-	CONCEPT_ASSERT(models::Same<int&, ns::reference_t<int*>>);
-	CONCEPT_ASSERT(models::Same<int&, ns::reference_t<int[]>>);
-	CONCEPT_ASSERT(models::Same<int&, ns::reference_t<int[4]>>);
-	CONCEPT_ASSERT(models::Same<int&, ns::reference_t<A>>);
-	CONCEPT_ASSERT(models::Same<int&, ns::reference_t<B>>);
-	CONCEPT_ASSERT(models::Same<const int&, ns::reference_t<const int*>>);
+	CONCEPT_ASSERT(ranges::Same<int&, ns::iter_reference_t<int*>>);
+	CONCEPT_ASSERT(ranges::Same<int&, ns::iter_reference_t<int[]>>);
+	CONCEPT_ASSERT(ranges::Same<int&, ns::iter_reference_t<int[4]>>);
+	CONCEPT_ASSERT(ranges::Same<int&, ns::iter_reference_t<A>>);
+	CONCEPT_ASSERT(ranges::Same<int&, ns::iter_reference_t<B>>);
+	CONCEPT_ASSERT(ranges::Same<const int&, ns::iter_reference_t<const int*>>);
 
-	CONCEPT_ASSERT(models::Same<int&&, ns::rvalue_reference_t<int*>>);
-	CONCEPT_ASSERT(models::Same<int&&, ns::rvalue_reference_t<int[]>>);
-	CONCEPT_ASSERT(models::Same<int&&, ns::rvalue_reference_t<int[4]>>);
-	CONCEPT_ASSERT(models::Same<int&&, ns::rvalue_reference_t<A>>);
-	CONCEPT_ASSERT(models::Same<int&&, ns::rvalue_reference_t<B>>);
-	CONCEPT_ASSERT(models::Same<const int&&, ns::rvalue_reference_t<const int*>>);
+	CONCEPT_ASSERT(ranges::Same<int&&, ns::iter_rvalue_reference_t<int*>>);
+	CONCEPT_ASSERT(ranges::Same<int&&, ns::iter_rvalue_reference_t<int[]>>);
+	CONCEPT_ASSERT(ranges::Same<int&&, ns::iter_rvalue_reference_t<int[4]>>);
+	CONCEPT_ASSERT(ranges::Same<int&&, ns::iter_rvalue_reference_t<A>>);
+	CONCEPT_ASSERT(ranges::Same<int&&, ns::iter_rvalue_reference_t<B>>);
+	CONCEPT_ASSERT(ranges::Same<const int&&, ns::iter_rvalue_reference_t<const int*>>);
 
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<int*>>);
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<int[]>>);
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<int[4]>>);
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<A>>);
-	CONCEPT_ASSERT(models::Same<double, ns::value_type_t<B>>);
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<const int*>>);
-	CONCEPT_ASSERT(!meta::is_trait<ns::value_type<void>>());
-	CONCEPT_ASSERT(!meta::is_trait<ns::value_type<void*>>());
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<const int* const>>);
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<const int[2]>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<int*>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<int[]>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<int[4]>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<A>>);
+	CONCEPT_ASSERT(ranges::Same<double, ns::iter_value_t<B>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<const int*>>);
+	CONCEPT_ASSERT(!meta::is_trait<ns::readable_traits<void>>());
+	CONCEPT_ASSERT(!meta::is_trait<ns::readable_traits<void*>>());
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<const int* const>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<const int[2]>>);
 	struct S { using value_type = int; using element_type = int const; };
-	CONCEPT_ASSERT(models::Same<int, ns::value_type_t<S>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_value_t<S>>);
 
-	CONCEPT_ASSERT(models::Same<std::ptrdiff_t, ns::difference_type_t<int*>>);
-	CONCEPT_ASSERT(models::Same<std::ptrdiff_t, ns::difference_type_t<int[]>>);
-	CONCEPT_ASSERT(models::Same<std::ptrdiff_t, ns::difference_type_t<int[4]>>);
+	CONCEPT_ASSERT(ranges::Same<std::ptrdiff_t, ns::iter_difference_t<int*>>);
+	CONCEPT_ASSERT(ranges::Same<std::ptrdiff_t, ns::iter_difference_t<int[]>>);
+	CONCEPT_ASSERT(ranges::Same<std::ptrdiff_t, ns::iter_difference_t<int[4]>>);
 
-	CONCEPT_ASSERT(!meta::is_trait<ns::difference_type<void>>());
-	CONCEPT_ASSERT(!meta::is_trait<ns::difference_type<void*>>());
+	CONCEPT_ASSERT(!meta::is_trait<ns::incrementable_traits<void>>());
+	CONCEPT_ASSERT(!meta::is_trait<ns::incrementable_traits<void*>>());
 
-	CONCEPT_ASSERT(models::Same<int, ns::difference_type_t<int>>);
+	CONCEPT_ASSERT(ranges::Same<int, ns::iter_difference_t<int>>);
 #if VALIDATE_STL2
-	CONCEPT_ASSERT(models::Same<ns::iterator_category_t<int*>, __stl2::ext::contiguous_iterator_tag>);
-	CONCEPT_ASSERT(models::Same<ns::iterator_category_t<const int*>, __stl2::ext::contiguous_iterator_tag>);
+	CONCEPT_ASSERT(ranges::Same<ns::iterator_category_t<int*>, ns::contiguous_iterator_tag>);
+	CONCEPT_ASSERT(ranges::Same<ns::iterator_category_t<const int*>, ns::contiguous_iterator_tag>);
 #elif VALIDATE_RANGES
-	CONCEPT_ASSERT(models::Same<ns::iterator_category_t<int*>, ns::random_access_iterator_tag>);
-	CONCEPT_ASSERT(models::Same<ns::iterator_category_t<const int*>, ns::random_access_iterator_tag>);
+	CONCEPT_ASSERT(ranges::Same<ns::iterator_category_t<int*>, ns::random_access_iterator_tag>);
+	CONCEPT_ASSERT(ranges::Same<ns::iterator_category_t<const int*>, ns::random_access_iterator_tag>);
 #endif
 
-	template <class T>
+	template<class T>
 	struct derive_from : T {};
 
-	template <class T, bool Derive>
+	template<class T, bool Derive>
 	using iterator =
 		meta::apply<
 			meta::bind_front<
@@ -155,7 +121,7 @@ namespace associated_type_test {
 				meta::list<void, void, void, void>,
 				meta::list<int>>>;
 
-	template <class T, bool B, class U>
+	template<class T, bool B, class U>
 	using test = std::is_same<ns::iterator_category_t<iterator<T, B>>, U>;
 
 	CONCEPT_ASSERT(!meta::is_trait<ns::iterator_category<void*>>());
@@ -196,26 +162,26 @@ namespace readable_test {
 		using value_type = int;
 	};
 
-	CONCEPT_ASSERT(!models::Readable<void>);
-	CONCEPT_ASSERT(!models::Readable<void*>);
-	CONCEPT_ASSERT(models::Readable<int*>);
-	CONCEPT_ASSERT(models::Readable<const int*>);
-	CONCEPT_ASSERT(models::Readable<A>);
-	CONCEPT_ASSERT(models::Same<ns::value_type_t<A>,int>);
+	CONCEPT_ASSERT(!ranges::Readable<void>);
+	CONCEPT_ASSERT(!ranges::Readable<void*>);
+	CONCEPT_ASSERT(ranges::Readable<int*>);
+	CONCEPT_ASSERT(ranges::Readable<const int*>);
+	CONCEPT_ASSERT(ranges::Readable<A>);
+	CONCEPT_ASSERT(ranges::Same<ns::iter_value_t<A>,int>);
 
 	struct MoveOnlyReadable {
 		using value_type = std::unique_ptr<int>;
 		value_type operator*() const;
 	};
 
-	CONCEPT_ASSERT(models::Readable<MoveOnlyReadable>);
+	CONCEPT_ASSERT(ranges::Readable<MoveOnlyReadable>);
 
 	struct ArrayReadable {
 		using value_type = int[2];
 		value_type& operator*() const;
 	};
 
-	CONCEPT_ASSERT(models::Readable<ArrayReadable>);
+	CONCEPT_ASSERT(ranges::Readable<ArrayReadable>);
 
 	struct Abstract {
 		virtual void foo() = 0;
@@ -225,7 +191,7 @@ namespace readable_test {
 		Abstract& operator*() const;
 	};
 
-	CONCEPT_ASSERT(models::Readable<AbstractReadable>);
+	CONCEPT_ASSERT(ranges::Readable<AbstractReadable>);
 }
 
 namespace writable_test {
@@ -233,32 +199,32 @@ namespace writable_test {
 		int& operator*() const;
 	};
 
-	CONCEPT_ASSERT(models::Writable<std::unique_ptr<int>*, std::unique_ptr<int>&&>);
-	CONCEPT_ASSERT(!models::Writable<std::unique_ptr<int>*, std::unique_ptr<int>&>);
-	CONCEPT_ASSERT(!models::Writable<void, int>);
-	CONCEPT_ASSERT(!models::Writable<void*, void>);
-	CONCEPT_ASSERT(models::Writable<int*, int>);
-	CONCEPT_ASSERT(models::Writable<int*, int&>);
-	CONCEPT_ASSERT(models::Writable<int*, const int&>);
-	CONCEPT_ASSERT(models::Writable<int*, const int>);
-	CONCEPT_ASSERT(!models::Writable<const int*, int>);
-	CONCEPT_ASSERT(models::Writable<A, int>);
-	CONCEPT_ASSERT(models::Writable<A, const int&>);
-	CONCEPT_ASSERT(models::Writable<A, double>);
-	CONCEPT_ASSERT(models::Writable<A, const double&>);
+	CONCEPT_ASSERT(ranges::Writable<std::unique_ptr<int>*, std::unique_ptr<int>&&>);
+	CONCEPT_ASSERT(!ranges::Writable<std::unique_ptr<int>*, std::unique_ptr<int>&>);
+	CONCEPT_ASSERT(!ranges::Writable<void, int>);
+	CONCEPT_ASSERT(!ranges::Writable<void*, void>);
+	CONCEPT_ASSERT(ranges::Writable<int*, int>);
+	CONCEPT_ASSERT(ranges::Writable<int*, int&>);
+	CONCEPT_ASSERT(ranges::Writable<int*, const int&>);
+	CONCEPT_ASSERT(ranges::Writable<int*, const int>);
+	CONCEPT_ASSERT(!ranges::Writable<const int*, int>);
+	CONCEPT_ASSERT(ranges::Writable<A, int>);
+	CONCEPT_ASSERT(ranges::Writable<A, const int&>);
+	CONCEPT_ASSERT(ranges::Writable<A, double>);
+	CONCEPT_ASSERT(ranges::Writable<A, const double&>);
 } // namespace writable_test
 
-CONCEPT_ASSERT(models::WeaklyIncrementable<int>);
-CONCEPT_ASSERT(models::WeaklyIncrementable<unsigned int>);
-CONCEPT_ASSERT(!models::WeaklyIncrementable<void>);
-CONCEPT_ASSERT(models::WeaklyIncrementable<int*>);
-CONCEPT_ASSERT(models::WeaklyIncrementable<const int*>);
+CONCEPT_ASSERT(ranges::WeaklyIncrementable<int>);
+CONCEPT_ASSERT(ranges::WeaklyIncrementable<unsigned int>);
+CONCEPT_ASSERT(!ranges::WeaklyIncrementable<void>);
+CONCEPT_ASSERT(ranges::WeaklyIncrementable<int*>);
+CONCEPT_ASSERT(ranges::WeaklyIncrementable<const int*>);
 
-CONCEPT_ASSERT(models::Incrementable<int>);
-CONCEPT_ASSERT(models::Incrementable<unsigned int>);
-CONCEPT_ASSERT(!models::Incrementable<void>);
-CONCEPT_ASSERT(models::Incrementable<int*>);
-CONCEPT_ASSERT(models::Incrementable<const int*>);
+CONCEPT_ASSERT(ranges::Incrementable<int>);
+CONCEPT_ASSERT(ranges::Incrementable<unsigned int>);
+CONCEPT_ASSERT(!ranges::Incrementable<void>);
+CONCEPT_ASSERT(ranges::Incrementable<int*>);
+CONCEPT_ASSERT(ranges::Incrementable<const int*>);
 
 namespace iterator_sentinel_test {
 	struct A {
@@ -274,28 +240,28 @@ namespace iterator_sentinel_test {
 		bool operator != (const A&) const;
 	};
 
-	CONCEPT_ASSERT(models::Iterator<int*>);
-	CONCEPT_ASSERT(models::Iterator<const int*>);
-	CONCEPT_ASSERT(!models::Iterator<void*>);
-	CONCEPT_ASSERT(models::Iterator<A>);
-	CONCEPT_ASSERT(models::InputIterator<A>);
+	CONCEPT_ASSERT(ranges::Iterator<int*>);
+	CONCEPT_ASSERT(ranges::Iterator<const int*>);
+	CONCEPT_ASSERT(!ranges::Iterator<void*>);
+	CONCEPT_ASSERT(ranges::Iterator<A>);
+	CONCEPT_ASSERT(ranges::InputIterator<A>);
 
-	CONCEPT_ASSERT(models::Iterator<int*>);
-	CONCEPT_ASSERT(models::Sentinel<int*, int*>);
-	CONCEPT_ASSERT(models::Sentinel<const int*, const int*>);
-	CONCEPT_ASSERT(models::Sentinel<const int*, int*>);
-	CONCEPT_ASSERT(!models::Sentinel<void*, void*>);
-	CONCEPT_ASSERT(models::Sentinel<A, A>);
+	CONCEPT_ASSERT(ranges::Iterator<int*>);
+	CONCEPT_ASSERT(ranges::Sentinel<int*, int*>);
+	CONCEPT_ASSERT(ranges::Sentinel<const int*, const int*>);
+	CONCEPT_ASSERT(ranges::Sentinel<const int*, int*>);
+	CONCEPT_ASSERT(!ranges::Sentinel<void*, void*>);
+	CONCEPT_ASSERT(ranges::Sentinel<A, A>);
 } // namespace iterator_sentinel_test
 
 namespace indirectly_callable_test {
-	CONCEPT_ASSERT(models::IndirectInvocable<std::plus<int>, int*, int*>);
+	CONCEPT_ASSERT(ranges::ext::IndirectInvocable<std::plus<int>, int*, int*>);
 }
 
-namespace indirect_result_of_test {
-	template <class R, class... Args>
+namespace indirect_invoke_result_test {
+	template<class R, class... Args>
 	using fn_t = R(Args...);
-	CONCEPT_ASSERT(models::Same<ns::indirect_result_of_t<fn_t<void, int>&(const int*)>, void>);
+	CONCEPT_ASSERT(ranges::Same<ns::indirect_result_t<fn_t<void, int>&, const int*>, void>);
 }
 
 int main() {

@@ -23,16 +23,13 @@
 ///////////////////////////////////////////////////////////////////////////
 // equal_range [equal.range]
 //
-// Not to spec:
-// * use of ext::subrange and ext::safe_subrange_t throughout
-//
 STL2_OPEN_NAMESPACE {
 	namespace ext {
-		template <ForwardIterator I, class T, class Comp = less<>, class Proj = identity>
+		template<ForwardIterator I, class T, class Comp = less<>, class Proj = identity>
 		requires
 			IndirectStrictWeakOrder<
 				Comp, const T*, projected<I, Proj>>
-		ext::subrange<I> equal_range_n(I first, difference_type_t<I> dist, const T& value,
+		subrange<I> equal_range_n(I first, iter_difference_t<I> dist, const T& value,
 			Comp comp = Comp{}, Proj proj = Proj{})
 		{
 			if (0 < dist) {
@@ -63,19 +60,19 @@ STL2_OPEN_NAMESPACE {
 		}
 	}
 
-	template <ForwardIterator I, Sentinel<I> S, class T,
+	template<ForwardIterator I, Sentinel<I> S, class T,
 		class Comp = less<>, class Proj = identity>
 	requires
 		IndirectStrictWeakOrder<
 			Comp, const T*, projected<I, Proj>>
-	ext::subrange<I> equal_range(I first, S last, const T& value,
+	subrange<I> equal_range(I first, S last, const T& value,
 		Comp comp = Comp{}, Proj proj = Proj{})
 	{
 		// Probe exponentially for either end-of-range, an iterator that
 		// is past the equal range (i.e., denotes an element greater
 		// than value), or is in the equal range (denotes an element equal
 		// to value).
-		auto dist = difference_type_t<I>{1};
+		auto dist = iter_difference_t<I>{1};
 		while (true) {
 			auto mid = first;
 			auto d = __stl2::advance(mid, dist, last);
@@ -109,12 +106,12 @@ STL2_OPEN_NAMESPACE {
 		}
 	}
 
-	template <ForwardIterator I, SizedSentinel<I> S, class T,
+	template<ForwardIterator I, SizedSentinel<I> S, class T,
 		class Comp = less<>, class Proj = identity>
 	requires
 		IndirectStrictWeakOrder<
 			Comp, const T*, projected<I, Proj>>
-	ext::subrange<I> equal_range(I first, S last, const T& value,
+	subrange<I> equal_range(I first, S last, const T& value,
 		Comp comp = Comp{}, Proj proj = Proj{})
 	{
 		auto len = __stl2::distance(first, std::move(last));
@@ -122,12 +119,12 @@ STL2_OPEN_NAMESPACE {
 			std::ref(comp), std::ref(proj));
 	}
 
-	template <ForwardRange Rng, class T,
+	template<ForwardRange Rng, class T,
 		class Comp = less<>, class Proj = identity>
 	requires
 		IndirectStrictWeakOrder<
 			Comp, const T*, projected<iterator_t<Rng>, Proj>>
-	ext::safe_subrange_t<Rng>
+	safe_subrange_t<Rng>
 	equal_range(Rng&& rng, const T& value, Comp comp = Comp{}, Proj proj = Proj{})
 	{
 		return __stl2::equal_range(
@@ -135,13 +132,13 @@ STL2_OPEN_NAMESPACE {
 			std::ref(comp), std::ref(proj));
 	}
 
-	template <ForwardRange Rng, class T, class Comp = less<>,
+	template<ForwardRange Rng, class T, class Comp = less<>,
 		class Proj = identity>
 	requires
 		IndirectStrictWeakOrder<
 			Comp, const T*, projected<iterator_t<Rng>, Proj>> &&
 		SizedRange<Rng>
-	ext::safe_subrange_t<Rng>
+	safe_subrange_t<Rng>
 	equal_range(Rng&& rng, const T& value, Comp comp = Comp{}, Proj proj = Proj{})
 	{
 		return ext::equal_range_n(

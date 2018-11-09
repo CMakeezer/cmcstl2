@@ -28,7 +28,7 @@
 // partial_sort_copy [partial.sort.copy]
 //
 STL2_OPEN_NAMESPACE {
-	template <InputIterator I1, Sentinel<I1> S1,
+	template<InputIterator I1, Sentinel<I1> S1,
 		RandomAccessIterator I2, Sentinel<I2> S2,
 		class Comp = less<>,
 		class Proj1 = identity, class Proj2 = identity>
@@ -48,9 +48,9 @@ STL2_OPEN_NAMESPACE {
 			__stl2::make_heap(result_first, r, std::ref(comp), std::ref(proj2));
 			const auto len = __stl2::distance(result_first, r);
 			for(; first != last; ++first) {
-				reference_t<I1>&& x = *first;
+				iter_reference_t<I1>&& x = *first;
 				if(__stl2::invoke(comp, __stl2::invoke(proj1, x), __stl2::invoke(proj2, *result_first))) {
-					*result_first = std::forward<reference_t<I1>>(x);
+					*result_first = std::forward<iter_reference_t<I1>>(x);
 					detail::sift_down_n(result_first, len, result_first,
 						std::ref(comp), std::ref(proj2));
 				}
@@ -60,7 +60,7 @@ STL2_OPEN_NAMESPACE {
 		return r;
 	}
 
-	template <InputRange Rng1, RandomAccessRange Rng2, class Comp = less<>,
+	template<InputRange Rng1, RandomAccessRange Rng2, class Comp = less<>,
 		class Proj1 = identity, class Proj2 = identity>
 	requires
 		IndirectlyCopyable<iterator_t<Rng1>, iterator_t<Rng2>> &&

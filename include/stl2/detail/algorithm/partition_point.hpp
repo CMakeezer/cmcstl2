@@ -33,11 +33,11 @@
 //
 STL2_OPEN_NAMESPACE {
 	namespace ext {
-		template <ForwardIterator I, class Pred, class Proj = identity>
+		template<ForwardIterator I, class Pred, class Proj = identity>
 		requires
 			IndirectUnaryPredicate<
 				Pred, projected<I, Proj>>
-		I partition_point_n(I first, difference_type_t<I> n,
+		I partition_point_n(I first, iter_difference_t<I> n,
 			Pred pred, Proj proj = Proj{})
 		{
 			STL2_EXPECT(0 <= n);
@@ -56,7 +56,7 @@ STL2_OPEN_NAMESPACE {
 		}
 	}
 
-	template <ForwardIterator I, Sentinel<I> S, class Pred, class Proj = identity>
+	template<ForwardIterator I, Sentinel<I> S, class Pred, class Proj = identity>
 	requires
 		IndirectUnaryPredicate<
 			Pred, projected<I, Proj>>
@@ -64,7 +64,7 @@ STL2_OPEN_NAMESPACE {
 	{
 		// Probe exponentially for either end-of-range or an iterator
 		// that is past the partition point (i.e., does not satisfy pred).
-		auto n = difference_type_t<I>{1};
+		auto n = iter_difference_t<I>{1};
 		while (true) {
 			auto m = first;
 			auto d = __stl2::advance(m, n, last);
@@ -78,7 +78,7 @@ STL2_OPEN_NAMESPACE {
 		}
 	}
 
-	template <ForwardIterator I, Sentinel<I> S, class Pred, class Proj = identity>
+	template<ForwardIterator I, Sentinel<I> S, class Pred, class Proj = identity>
 	requires
 		SizedSentinel<S, I> &&
 		IndirectUnaryPredicate<
@@ -90,7 +90,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(pred), std::ref(proj));
 	}
 
-	template <ForwardRange Rng, class Pred, class Proj = identity>
+	template<ForwardRange Rng, class Pred, class Proj = identity>
 	requires
 		IndirectUnaryPredicate<
 			Pred, projected<iterator_t<Rng>, Proj>>
@@ -101,7 +101,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(pred), std::ref(proj));
 	}
 
-	template <ForwardRange Rng, class Pred, class Proj = identity>
+	template<ForwardRange Rng, class Pred, class Proj = identity>
 	requires
 		SizedRange<Rng> &&
 		IndirectUnaryPredicate<

@@ -30,7 +30,7 @@
 
 namespace stl2 = __stl2;
 
-template <class InIter, class OutIter, class Sent = InIter>
+template<class InIter, class OutIter, class Sent = InIter>
 void test_iter()
 {
 	int ia[] = {0, 1, 2, 3, 4};
@@ -47,13 +47,13 @@ void test_iter()
 	CHECK(ib[4] == 4);
 }
 
-template <class InIter, class OutIter, class Sent = InIter>
+template<class InIter, class OutIter, class Sent = InIter>
 void test_rng()
 {
 	int ia[] = {0, 1, 2, 3, 4};
 	const unsigned sa = sizeof(ia)/sizeof(ia[0]);
 	int ib[sa] = {0};
-	auto rng = stl2::ext::subrange(InIter(ia), Sent(ia+sa));
+	auto rng = stl2::subrange(InIter(ia), Sent(ia+sa));
 	std::pair<InIter, OutIter> r = stl2::replace_copy_if(rng, OutIter(ib),
 		[](int i){return 2==i;}, 5);
 	CHECK(base(r.first) == ia + sa);
@@ -65,7 +65,7 @@ void test_rng()
 	CHECK(ib[4] == 4);
 }
 
-template <class InIter, class OutIter>
+template<class InIter, class OutIter>
 void test()
 {
 	using Sent = typename sentinel_type<InIter>::type;

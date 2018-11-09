@@ -32,24 +32,24 @@ namespace test_impl
 		return test_failures;
 	}
 
-	template <typename T>
+	template<typename T>
 	struct streamable_base
 	{};
 
-	template <typename T>
+	template<typename T>
 	std::ostream &operator<<(std::ostream &sout, streamable_base<T> const &)
 	{
 		return sout << "<non-streamable type>";
 	}
 
-	template <typename T>
+	template<typename T>
 	struct streamable : streamable_base<T>
 	{
 	private:
 		T const &t_;
 	public:
 		explicit streamable(T const &t) : t_(t) {}
-		template <typename U = T>
+		template<typename U = T>
 		friend auto operator<<(std::ostream &sout, streamable const &s) ->
 			decltype(sout << std::declval<U const &>())
 		{
@@ -57,13 +57,13 @@ namespace test_impl
 		}
 	};
 
-	template <typename T>
+	template<typename T>
 	streamable<T> stream(T const &t)
 	{
 		return streamable<T>{t};
 	}
 
-	template <typename T>
+	template<typename T>
 	struct R
 	{
 	private:
@@ -74,7 +74,7 @@ namespace test_impl
 		int lineno_;
 		bool dismissed_ = false;
 
-		template <typename U>
+		template<typename U>
 		void oops(U const &u) const
 		{
 			std::cerr
@@ -90,7 +90,7 @@ namespace test_impl
 		{
 			dismissed_ = true;
 		}
-		template <typename V = T>
+		template<typename V = T>
 		auto eval_(int) -> decltype(!std::declval<V>())
 		{
 			return !t_;
@@ -109,37 +109,37 @@ namespace test_impl
 			if(!dismissed_ && eval_(42))
 				this->oops(42);
 		}
-		template <typename U>
+		template<typename U>
 		void operator==(U const &u)
 		{
 			dismiss();
 			if(!(t_ == u)) this->oops(u);
 		}
-		template <typename U>
+		template<typename U>
 		void operator!=(U const &u)
 		{
 			dismiss();
 			if(!(t_ != u)) this->oops(u);
 		}
-		template <typename U>
+		template<typename U>
 		void operator<(U const &u)
 		{
 			dismiss();
 			if(!(t_ < u)) this->oops(u);
 		}
-		template <typename U>
+		template<typename U>
 		void operator<=(U const &u)
 		{
 			dismiss();
 			if(!(t_ <= u)) this->oops(u);
 		}
-		template <typename U>
+		template<typename U>
 		void operator>(U const &u)
 		{
 			dismiss();
 			if(!(t_ > u)) this->oops(u);
 		}
-		template <typename U>
+		template<typename U>
 		void operator>=(U const &u)
 		{
 			dismiss();
@@ -158,7 +158,7 @@ namespace test_impl
 		S(char const *filename, int lineno, char const *expr, char const *func)
 		  : filename_(filename), expr_(expr), func_(func), lineno_(lineno)
 		{}
-		template <typename T>
+		template<typename T>
 		R<T> operator->*(T && t)
 		{
 			return {filename_, lineno_, expr_, func_, std::forward<T>(t)};
@@ -171,33 +171,61 @@ inline int test_result()
 	return ::test_impl::test_failures() ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
-#define CHECK(...)                                                                                  \
-	(void)(::test_impl::S{__FILE__, __LINE__, #__VA_ARGS__, __PRETTY_FUNCTION__} ->* __VA_ARGS__) \
+#define CHECK(...)                                                                                 \
+	(void)(::test_impl::S{__FILE__, __LINE__, #__VA_ARGS__, __PRETTY_FUNCTION__} ->* __VA_ARGS__)  \
 	/**/
 
-template <typename Rng, typename Rng2>
-void check_equal_(Rng && actual, Rng2&& expected)
+template<typename Rng, typename Rng2>
+constexpr void check_equal_(const char* file, int line, const char* lhs, const char* rhs,
+	const char* fun, Rng && actual, Rng2&& expected)
 {
 	auto begin0 = NS::begin(actual);
 	auto end0 = NS::end(actual);
 	auto begin1 = NS::begin(expected);
 	auto end1 = NS::end(expected);
-	for(; begin0 != end0 && begin1 != end1; ++begin0, ++begin1)
-		CHECK(*begin0 == *begin1);
-	CHECK(begin0 == end0);
-	CHECK(begin1 == end1);
+
+	for(std::size_t i = 0; begin0 != end0 && begin1 != end1; ++begin0, (void)++i, ++begin1) {
+		if (*begin0 != *begin1) {
+			std::cerr <<
+				"> ERROR: CHECK failed \"" << lhs << '[' << i << "] != " << rhs << '[' << i << "]\"\n"
+				"> \t" << file << '(' << line << ')' << "\n"
+				"> \t in function \"" << fun << "\"\n"
+				"> \tEXPECTED: " << test_impl::stream(*begin1) << "\n"
+				"> \tACTUAL: " << test_impl::stream(*begin0) << '\n';
+			++test_impl::test_failures();
+		}
+	}
+
+	if (!(begin0 == end0)) {
+		std::cerr <<
+			"> ERROR: CHECK failed \"begin0 != end0\"\n"
+			"> \t" << file << '(' << line << ')' << "\n"
+			"> \t in function \"" << fun << "\"\n"
+			"> \tEXPECTED: " << test_impl::stream(end0) << "\n"
+			"> \tACTUAL: " << test_impl::stream(begin0) << '\n';
+		++test_impl::test_failures();
+	}
+
+	if (!(begin1 == end1)) {
+		std::cerr <<
+			"> ERROR: CHECK failed \"begin1 != end1\"\n"
+			"> \t" << file << '(' << line << ')' << "\n"
+			"> \t in function \"" << fun << "\"\n"
+			"> \tEXPECTED: " << test_impl::stream(end1) << "\n"
+			"> \tACTUAL: " << test_impl::stream(begin1) << '\n';
+		++test_impl::test_failures();
+	}
 }
 
-template <typename Val, typename Rng>
-void check_equal(Rng && actual, std::initializer_list<Val> expected)
+template<typename Val, typename Rng>
+constexpr void check_equal_(const char* file, int line, const char* lhs, const char* rhs,
+	const char* fun, Rng && actual, std::initializer_list<Val>&& expected)
 {
-	check_equal_(actual, expected);
+	check_equal_(file, line, lhs, rhs, fun, actual, expected);
 }
 
-template <typename Rng, typename Rng2>
-void check_equal(Rng && actual, Rng2&& expected)
-{
-	check_equal_(actual, expected);
-}
+#define CHECK_EQUAL(first, ...) \
+	check_equal_(__FILE__, __LINE__, #first, #__VA_ARGS__, __PRETTY_FUNCTION__, first, __VA_ARGS__) \
+	/**/
 
 #endif

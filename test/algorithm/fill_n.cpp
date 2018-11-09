@@ -28,19 +28,19 @@
 
 namespace stl2 = __stl2;
 
-template <stl2::ForwardIterator I, stl2::Sentinel<I> S, class T>
+template<stl2::ForwardIterator I, stl2::Sentinel<I> S, class T>
 	requires stl2::Writable<I, const T&>
 I count_and_fill(I i, S s, const T& t) {
 	return stl2::fill_n(i, stl2::distance(i, s), t);
 }
 
-template <stl2::ForwardRange Rng, class T>
+template<stl2::ForwardRange Rng, class T>
 	requires stl2::Writable<stl2::iterator_t<Rng>, const T&>
 stl2::safe_iterator_t<Rng> count_and_fill(Rng&& rng, const T& t) {
 	return stl2::fill_n(stl2::begin(rng), stl2::distance(rng), t);
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_char()
 {
@@ -53,7 +53,7 @@ test_char()
 	CHECK(ca[3] == 1);
 	CHECK(i == Iter(ca + 4));
 
-	auto rng = stl2::ext::subrange(Iter(ca), Sent(ca+n));
+	auto rng = stl2::subrange(Iter(ca), Sent(ca+n));
 	i = count_and_fill(rng, char(2));
 	CHECK(ca[0] == 2);
 	CHECK(ca[1] == 2);
@@ -61,7 +61,7 @@ test_char()
 	CHECK(ca[3] == 2);
 	CHECK(i == Iter(ca + 4));
 
-	auto j = count_and_fill(stl2::ext::subrange(Iter(ca), Sent(ca+n)), char(3));
+	auto j = count_and_fill(stl2::subrange(Iter(ca), Sent(ca+n)), char(3));
 	CHECK(ca[0] == 3);
 	CHECK(ca[1] == 3);
 	CHECK(ca[2] == 3);
@@ -69,7 +69,7 @@ test_char()
 	CHECK(j == Iter(ca + 4));
 }
 
-template <class Iter, class Sent = Iter>
+template<class Iter, class Sent = Iter>
 void
 test_int()
 {
@@ -81,7 +81,7 @@ test_int()
 	CHECK(ia[2] == 1);
 	CHECK(ia[3] == 1);
 
-	auto rng = stl2::ext::subrange(Iter(ia), Sent(ia+n));
+	auto rng = stl2::subrange(Iter(ia), Sent(ia+n));
 	count_and_fill(rng, 2);
 	CHECK(ia[0] == 2);
 	CHECK(ia[2] == 2);

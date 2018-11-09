@@ -29,28 +29,18 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// destroy_at [Extension]
 	//
-	template <Destructible T>
+	template<Destructible T>
 	void destroy_at(T* p) noexcept
 	{
 		p->~T();
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	// destroy_at [Extension]
-	//
-	template <Destructible T>
-	void destroy_at(T& p) noexcept
-	{
-		p.~T();
-	}
-
-	///////////////////////////////////////////////////////////////////////////
 	// destroy [Extension]
 	//
-	template <InputIterator I, Sentinel<I> S>
+	template<__NoThrowInputIterator I, __NoThrowSentinel<I> S>
 	requires
-		Destructible<value_type_t<I>> &&
-		__ReferenceTo<I, value_type_t<I>>
+		Destructible<iter_value_t<I>>
 	I destroy(I first, S last) noexcept
 	{
 		for (; first != last; ++first) {
@@ -60,10 +50,9 @@ STL2_OPEN_NAMESPACE {
 		return first;
 	}
 
-	template <InputRange Rng>
+	template<__NoThrowInputRange Rng>
 	requires
-		Destructible<value_type_t<iterator_t<Rng>>> &&
-		__ReferenceTo<iterator_t<Rng>, value_type_t<iterator_t<Rng>>>
+		Destructible<iter_value_t<iterator_t<Rng>>>
 	safe_iterator_t<Rng> destroy(Rng&& rng) noexcept
 	{
 		return __stl2::destroy(__stl2::begin(rng), __stl2::end(rng));
@@ -72,18 +61,17 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// destroy_n [Extension]
 	//
-	template <InputIterator I>
+	template<__NoThrowInputIterator I>
 	requires
-		Destructible<value_type_t<I>> &&
-		__ReferenceTo<I, value_type_t<I>>
-	I destroy_n(I first, difference_type_t<I> n) noexcept
+		Destructible<iter_value_t<I>>
+	I destroy_n(I first, iter_difference_t<I> n) noexcept
 	{
 		return __stl2::destroy(__stl2::make_counted_iterator(std::move(first), n),
 			default_sentinel{}).base();
 	}
 
 	namespace detail {
-		template <__NoThrowForwardIterator I>
+		template<__NoThrowForwardIterator I>
 		class destroy_guard {
 			I first_;
 			detail::raw_ptr<I> last_;

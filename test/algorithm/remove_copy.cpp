@@ -31,7 +31,7 @@
 
 namespace stl2 = __stl2;
 
-template <class InIter, class OutIter, class Sent = InIter>
+template<class InIter, class OutIter, class Sent = InIter>
 void
 test_iter()
 {
@@ -49,14 +49,14 @@ test_iter()
 	CHECK(ib[5] == 4);
 }
 
-template <class InIter, class OutIter, class Sent = InIter>
+template<class InIter, class OutIter, class Sent = InIter>
 void
 test_range()
 {
 	int ia[] = {0, 1, 2, 3, 4, 2, 3, 4, 2};
 	constexpr unsigned sa = stl2::size(ia);
 	int ib[sa];
-	std::pair<InIter, OutIter> r = stl2::remove_copy(::as_lvalue(stl2::ext::subrange(InIter(ia), Sent(ia+sa))), OutIter(ib), 2);
+	std::pair<InIter, OutIter> r = stl2::remove_copy(::as_lvalue(stl2::subrange(InIter(ia), Sent(ia+sa))), OutIter(ib), 2);
 	CHECK(base(r.first) == ia + sa);
 	CHECK(base(r.second) == ib + sa-3);
 	CHECK(ib[0] == 0);
@@ -67,7 +67,7 @@ test_range()
 	CHECK(ib[5] == 4);
 }
 
-template <class InIter, class OutIter, class Sent = InIter>
+template<class InIter, class OutIter, class Sent = InIter>
 void
 test()
 {

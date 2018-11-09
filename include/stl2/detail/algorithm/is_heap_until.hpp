@@ -32,15 +32,15 @@
 //
 STL2_OPEN_NAMESPACE {
 	namespace detail {
-		template <RandomAccessIterator I, class Comp = less<>, class Proj = identity>
+		template<RandomAccessIterator I, class Comp = less<>, class Proj = identity>
 		requires
 			IndirectStrictWeakOrder<
 				Comp, projected<I, Proj>>
-		I is_heap_until_n(I first, const difference_type_t<I> n,
+		I is_heap_until_n(I first, const iter_difference_t<I> n,
 			Comp comp = Comp{}, Proj proj = Proj{})
 		{
 			STL2_EXPECT(0 <= n);
-			difference_type_t<I> p = 0, c = 1;
+			iter_difference_t<I> p = 0, c = 1;
 			I pp = first;
 			while (c < n) {
 				I cp = first + c;
@@ -60,7 +60,7 @@ STL2_OPEN_NAMESPACE {
 		}
 	}
 
-	template <RandomAccessIterator I, Sentinel<I> S, class Comp = less<>,
+	template<RandomAccessIterator I, Sentinel<I> S, class Comp = less<>,
 		class Proj = identity>
 	requires
 		IndirectStrictWeakOrder<
@@ -72,7 +72,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(comp), std::ref(proj));
 	}
 
-	template <RandomAccessRange Rng, class Comp = less<>, class Proj = identity>
+	template<RandomAccessRange Rng, class Comp = less<>, class Proj = identity>
 	requires
 		IndirectStrictWeakOrder<
 			Comp, projected<iterator_t<Rng>, Proj>>

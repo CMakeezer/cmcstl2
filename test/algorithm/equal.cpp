@@ -77,7 +77,7 @@ void test()
 void test_rng()
 {
 	using namespace ranges;
-	using ranges::ext::subrange;
+	using ranges::subrange;
 
 	int ia[] = {0, 1, 2, 3, 4, 5};
 	constexpr unsigned s = size(ia);
@@ -128,7 +128,7 @@ void test_rng()
 
 int comparison_count = 0;
 
-template <typename T>
+template<typename T>
 bool counting_equals(const T &a, const T &b)
 {
 	++comparison_count;
@@ -207,7 +207,7 @@ void test_pred()
 void test_rng_pred()
 {
 	using namespace ranges;
-	using ranges::ext::subrange;
+	using ranges::subrange;
 
 	int ia[] = {0, 1, 2, 3, 4, 5};
 	constexpr unsigned s = size(ia);

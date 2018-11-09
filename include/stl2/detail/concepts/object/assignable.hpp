@@ -22,9 +22,7 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// Assignable [concepts.lib.corelang.assignable]
 	//
-	// Not to spec
-	// See https://github.com/ericniebler/stl2/issues/229
-	template <class T, class U>
+	template<class T, class U>
 	concept bool Assignable =
 		_Is<T, is_lvalue_reference> &&
 		CommonReference<
@@ -33,13 +31,6 @@ STL2_OPEN_NAMESPACE {
 		requires(T t, U&& u) {
 			{ t = (U&&)u } -> Same<T>&&;
 		};
-
-	namespace models {
-		template <class, class>
-		constexpr bool Assignable = false;
-		__stl2::Assignable{T, U}
-		constexpr bool Assignable<T, U> = true;
-	}
 } STL2_CLOSE_NAMESPACE
 
 #endif

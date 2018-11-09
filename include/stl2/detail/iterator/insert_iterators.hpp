@@ -13,7 +13,7 @@
 #define STL2_DETAIL_ITERATOR_INSERT_ITERATORS_HPP
 
 #include <cstddef>
-#include <stl2/memory.hpp>
+#include <stl2/detail/memory/addressof.hpp>
 #include <stl2/detail/fwd.hpp>
 #include <stl2/detail/raw_ptr.hpp>
 #include <stl2/detail/iterator/basic_iterator.hpp>
@@ -22,7 +22,7 @@
 
 STL2_OPEN_NAMESPACE {
 	namespace detail {
-		template <MemberValueType Container>
+		template<MemberValueType Container>
 		class insert_cursor_base {
 		public:
 			using difference_type = std::ptrdiff_t;
@@ -37,7 +37,7 @@ STL2_OPEN_NAMESPACE {
 			raw_ptr<Container> container_{};
 		};
 
-		template <class Cursor, class Container>
+		template<class Cursor, class Container>
 		struct insert_cursor_mixin : protected ebo_box<Cursor, insert_cursor_mixin<Cursor, Container>> {
 			using difference_type =
 				typename insert_cursor_base<Container>::difference_type;
@@ -45,13 +45,13 @@ STL2_OPEN_NAMESPACE {
 			using insert_cursor_mixin::ebo_box::ebo_box;
 		};
 
-		template <class T, class C>
+		template<class T, class C>
 		concept bool BackInsertableInto =
 			requires(T&& t, C& c) {
 				c.push_back((T&&)t);
 			};
 
-		template <MemberValueType Container>
+		template<MemberValueType Container>
 		struct back_insert_cursor : insert_cursor_base<Container> {
 			using base_t = insert_cursor_base<Container>;
 			using mixin = insert_cursor_mixin<back_insert_cursor, Container>;
@@ -59,7 +59,7 @@ STL2_OPEN_NAMESPACE {
 			constexpr back_insert_cursor() = default;
 			using base_t::base_t;
 
-			template <BackInsertableInto<Container> T>
+			template<BackInsertableInto<Container> T>
 			void write(T&& t) {
 				base_t::container_->push_back(std::forward<T>(t));
 			}
@@ -69,23 +69,23 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// back_insert_iterator [back.insert.iterator]
 	//
-	template <detail::MemberValueType Container>
+	template<detail::MemberValueType Container>
 	using back_insert_iterator =
 		basic_iterator<detail::back_insert_cursor<Container>>;
 
-	template <detail::MemberValueType Container>
+	template<detail::MemberValueType Container>
 	STL2_CONSTEXPR_EXT auto back_inserter(Container& c) noexcept {
 		return back_insert_iterator<Container>{c};
 	}
 
 	namespace detail {
-		template <class T, class C>
+		template<class T, class C>
 		concept bool FrontInsertableInto =
 			requires(T&& t, C& c) {
 				c.push_front((T&&)t);
 			};
 
-		template <MemberValueType Container>
+		template<MemberValueType Container>
 		struct front_insert_cursor : insert_cursor_base<Container> {
 			using base_t = insert_cursor_base<Container>;
 			using mixin = insert_cursor_mixin<front_insert_cursor, Container>;
@@ -93,7 +93,7 @@ STL2_OPEN_NAMESPACE {
 			constexpr front_insert_cursor() = default;
 			using base_t::base_t;
 
-			template <FrontInsertableInto<Container> T>
+			template<FrontInsertableInto<Container> T>
 			void write(T&& t) {
 				base_t::container_->push_front(std::forward<T>(t));
 			}
@@ -103,17 +103,17 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// front_insert_iterator [front.insert.iterator]
 	//
-	template <detail::MemberValueType Container>
+	template<detail::MemberValueType Container>
 	using front_insert_iterator =
 		basic_iterator<detail::front_insert_cursor<Container>>;
 
-	template <detail::MemberValueType Container>
+	template<detail::MemberValueType Container>
 	STL2_CONSTEXPR_EXT auto front_inserter(Container& x) noexcept {
 		return front_insert_iterator<Container>{x};
 	}
 
 	namespace detail {
-		template <class T, class C>
+		template<class T, class C>
 		concept bool InsertableInto =
 			requires(T&& t, C& c, iterator_t<C> i) {
 				{  c.insert(i, (T&&)t) } -> iterator_t<C>;
@@ -123,7 +123,7 @@ STL2_OPEN_NAMESPACE {
 	///////////////////////////////////////////////////////////////////////////
 	// insert_iterator [insert.iterator]
 	//
-	template <detail::MemberValueType Container>
+	template<detail::MemberValueType Container>
 	requires requires { typename iterator_t<Container>; }
 	class insert_iterator {
 	public:
@@ -133,15 +133,15 @@ STL2_OPEN_NAMESPACE {
 		insert_iterator() = default;
 		insert_iterator(Container& x, iterator_t<Container> i)
 		: container(std::addressof(x)), iter(std::move(i)) {}
-		insert_iterator& operator=(const value_type_t<Container>& value)
-		requires detail::InsertableInto<const value_type_t<Container>&, Container>
+		insert_iterator& operator=(const iter_value_t<Container>& value)
+		requires detail::InsertableInto<const iter_value_t<Container>&, Container>
 		{
 			iter = container->insert(iter, value);
 			++iter;
 			return *this;
 		}
-		insert_iterator& operator=(value_type_t<Container>&& value)
-		requires detail::InsertableInto<value_type_t<Container>&&, Container>
+		insert_iterator& operator=(iter_value_t<Container>&& value)
+		requires detail::InsertableInto<iter_value_t<Container>&&, Container>
 		{
 			iter = container->insert(iter, std::move(value));
 			++iter;
@@ -153,8 +153,6 @@ STL2_OPEN_NAMESPACE {
 		insert_iterator& operator++() {
 			return *this;
 		}
-		// Not to spec:
-		// https://github.com/ericniebler/stl2/issues/232
 		insert_iterator& operator++(int) {
 			return *this;
 		}
@@ -163,7 +161,7 @@ STL2_OPEN_NAMESPACE {
 		iterator_t<Container> iter{};
 	};
 
-	template <detail::MemberValueType Container>
+	template<detail::MemberValueType Container>
 	STL2_CONSTEXPR_EXT auto inserter(Container& x, iterator_t<Container> i)
 	STL2_NOEXCEPT_RETURN(
 		insert_iterator<Container>{x, std::move(i)}

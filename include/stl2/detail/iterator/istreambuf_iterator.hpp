@@ -24,7 +24,7 @@
 
 STL2_OPEN_NAMESPACE {
 	namespace __istreambuf_iterator {
-		template <class charT, class traits = std::char_traits<charT>>
+		template<class charT, class traits = std::char_traits<charT>>
 		requires
 			SignedIntegral<typename traits::off_type>
 		class cursor;
@@ -34,7 +34,7 @@ STL2_OPEN_NAMESPACE {
 	// * requirements are implicit.
 	//   See https://github.com/ericniebler/stl2/issues/246)
 	//
-	template <class charT, class traits = std::char_traits<charT>>
+	template<class charT, class traits = std::char_traits<charT>>
 	requires
 		MoveConstructible<charT> &&
 		DefaultConstructible<charT> &&
@@ -43,7 +43,7 @@ STL2_OPEN_NAMESPACE {
 		basic_iterator<__istreambuf_iterator::cursor<charT, traits>>;
 
 	namespace __istreambuf_iterator {
-		template <class charT, class traits>
+		template<class charT, class traits>
 		requires
 			SignedIntegral<typename traits::off_type>
 		class cursor {
@@ -162,14 +162,19 @@ STL2_OPEN_NAMESPACE {
 			}
 
 			STL2_CONSTEXPR_EXT bool equal(const cursor& that) const noexcept {
-				return (sbuf_ == nullptr) == (that.sbuf_ == nullptr);
+				return at_end() == that.at_end();
 			}
 			STL2_CONSTEXPR_EXT bool equal(default_sentinel) const noexcept {
-				return sbuf_ == nullptr;
+				return at_end();
 			}
 
 		private:
 			detail::raw_ptr<streambuf_type> sbuf_ = nullptr;
+
+			bool at_end() const {
+				if (!sbuf_) return true;
+				return traits::eq_int_type(sbuf_->sgetc(), traits::eof());
+			}
 
 			charT current() const {
 				auto c = sbuf_->sgetc();

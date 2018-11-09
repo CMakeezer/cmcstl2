@@ -23,7 +23,7 @@
 // merge [alg.merge]
 //
 STL2_OPEN_NAMESPACE {
-	template <InputIterator I1, Sentinel<I1> S1,
+	template<InputIterator I1, Sentinel<I1> S1,
 		InputIterator I2, Sentinel<I2> S2,
 		class O, class Comp = less<>,
 		class Proj1 = identity, class Proj2 = identity>
@@ -45,13 +45,13 @@ STL2_OPEN_NAMESPACE {
 					std::move(first1), std::move(last1), std::move(result));
 				break;
 			}
-			reference_t<I1>&& v1 = *first1;
-			reference_t<I2>&& v2 = *first2;
+			iter_reference_t<I1>&& v1 = *first1;
+			iter_reference_t<I2>&& v2 = *first2;
 			if (__stl2::invoke(comp, __stl2::invoke(proj1, v1), __stl2::invoke(proj2, v2))) {
-				*result = std::forward<reference_t<I1>>(v1);
+				*result = std::forward<iter_reference_t<I1>>(v1);
 				++first1;
 			} else {
-				*result = std::forward<reference_t<I2>>(v2);
+				*result = std::forward<iter_reference_t<I2>>(v2);
 				++first2;
 			}
 			++result;
@@ -59,7 +59,7 @@ STL2_OPEN_NAMESPACE {
 		return {std::move(first1), std::move(first2), std::move(result)};
 	}
 
-	template <InputRange Rng1, InputRange Rng2, class O, class Comp = less<>,
+	template<InputRange Rng1, InputRange Rng2, class O, class Comp = less<>,
 		class Proj1 = identity, class Proj2 = identity>
 	requires
 		Mergeable<

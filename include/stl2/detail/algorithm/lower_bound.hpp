@@ -22,7 +22,7 @@
 // lower_bound [lower.bound]
 //
 STL2_OPEN_NAMESPACE {
-	template <class C, class T>
+	template<class C, class T>
 	struct __lower_bound_fn {
 		decay_t<C> comp_;
 		const T& value_;
@@ -36,12 +36,12 @@ STL2_OPEN_NAMESPACE {
 	};
 
 	namespace ext {
-		template <class I, class T, class Comp = less<>, class Proj = identity>
+		template<class I, class T, class Comp = less<>, class Proj = identity>
 		requires
 			ForwardIterator<__f<I>> &&
 			IndirectStrictWeakOrder<
 				Comp, const T*, projected<__f<I>, Proj>>
-		__f<I> lower_bound_n(I&& first, difference_type_t<__f<I>> n,
+		__f<I> lower_bound_n(I&& first, iter_difference_t<__f<I>> n,
 			const T& value, Comp comp = Comp{}, Proj proj = Proj{})
 		{
 			return __stl2::ext::partition_point_n(
@@ -51,7 +51,7 @@ STL2_OPEN_NAMESPACE {
 		}
 	}
 
-	template <class I, class S, class T, class Comp = less<>, class Proj = identity>
+	template<class I, class S, class T, class Comp = less<>, class Proj = identity>
 	requires
 		ForwardIterator<__f<I>> &&
 		Sentinel<__f<S>, __f<I>> &&
@@ -66,7 +66,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(proj));
 	}
 
-	template <class I, class S, class T, class Comp = less<>, class Proj = identity>
+	template<class I, class S, class T, class Comp = less<>, class Proj = identity>
 	requires
 		SizedSentinel<__f<S>, __f<I>> &&
 		ForwardIterator<__f<I>> &&
@@ -82,7 +82,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(comp), std::ref(proj));
 	}
 
-	template <ForwardRange Rng, class T, class Comp = less<>, class Proj = identity>
+	template<ForwardRange Rng, class T, class Comp = less<>, class Proj = identity>
 	requires
 		IndirectStrictWeakOrder<
 			Comp, const T*, projected<iterator_t<Rng>, Proj>>
@@ -93,7 +93,7 @@ STL2_OPEN_NAMESPACE {
 			std::ref(comp), std::ref(proj));
 	}
 
-	template <ForwardRange Rng, class T, class Comp = less<>, class Proj = identity>
+	template<ForwardRange Rng, class T, class Comp = less<>, class Proj = identity>
 	requires
 		SizedRange<Rng> &&
 		IndirectStrictWeakOrder<

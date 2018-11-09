@@ -23,7 +23,7 @@
 // set_difference [set.difference]
 //
 STL2_OPEN_NAMESPACE {
-	template <InputIterator I1, Sentinel<I1> S1,
+	template<InputIterator I1, Sentinel<I1> S1,
 		InputIterator I2, Sentinel<I2> S2,
 		WeaklyIncrementable O, class Comp = less<>,
 		class Proj1 = identity, class Proj2 = identity>
@@ -34,12 +34,12 @@ STL2_OPEN_NAMESPACE {
 		Comp comp = Comp{}, Proj1 proj1 = Proj1{}, Proj2 proj2 = Proj2{})
 	{
 		while (first1 != last1 && first2 != last2) {
-			reference_t<I1>&& v1 = *first1;
-			reference_t<I2>&& v2 = *first2;
+			iter_reference_t<I1>&& v1 = *first1;
+			iter_reference_t<I2>&& v2 = *first2;
 			auto&& p1 = __stl2::invoke(proj1, v1);
 			auto&& p2 = __stl2::invoke(proj2, v2);
 			if (__stl2::invoke(comp, p1, p2)) {
-				*result = std::forward<reference_t<I1>>(v1);
+				*result = std::forward<iter_reference_t<I1>>(v1);
 				++result;
 				++first1;
 			} else {
@@ -52,7 +52,7 @@ STL2_OPEN_NAMESPACE {
 		return __stl2::copy(std::move(first1), std::move(last1), std::move(result));
 	}
 
-	template <InputRange Rng1, InputRange Rng2, class O, class Comp = less<>,
+	template<InputRange Rng1, InputRange Rng2, class O, class Comp = less<>,
 		class Proj1 = identity, class Proj2 = identity>
 	requires
 		WeaklyIncrementable<__f<O>> &&

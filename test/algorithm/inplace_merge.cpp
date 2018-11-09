@@ -30,7 +30,7 @@ namespace stl2 = __stl2;
 
 namespace { std::mt19937 gen; }
 
-template <class Iter, typename Sent = Iter>
+template<class Iter, typename Sent = Iter>
 void
 test_one_iter(unsigned N, unsigned M)
 {
@@ -52,7 +52,7 @@ test_one_iter(unsigned N, unsigned M)
 	delete [] ia;
 }
 
-template <class Iter, typename Sent = Iter>
+template<class Iter, typename Sent = Iter>
 void
 test_one_rng(unsigned N, unsigned M)
 {
@@ -63,7 +63,7 @@ test_one_rng(unsigned N, unsigned M)
 	std::shuffle(ia, ia+N, gen);
 	std::sort(ia, ia+M);
 	std::sort(ia+M, ia+N);
-	auto res = stl2::inplace_merge(::as_lvalue(stl2::ext::subrange(Iter(ia), Sent(ia+N))), Iter(ia+M));
+	auto res = stl2::inplace_merge(::as_lvalue(stl2::subrange(Iter(ia), Sent(ia+N))), Iter(ia+M));
 	CHECK(res == Iter(ia+N));
 	if(N > 0)
 	{
@@ -75,7 +75,7 @@ test_one_rng(unsigned N, unsigned M)
 	std::shuffle(ia, ia+N, gen);
 	std::sort(ia, ia+M);
 	std::sort(ia+M, ia+N);
-	auto res2 = stl2::inplace_merge(stl2::ext::subrange(Iter(ia), Sent(ia+N)), Iter(ia+M));
+	auto res2 = stl2::inplace_merge(stl2::subrange(Iter(ia), Sent(ia+N)), Iter(ia+M));
 	CHECK(res2 == Iter(ia+N));
 	if(N > 0)
 	{
@@ -87,7 +87,7 @@ test_one_rng(unsigned N, unsigned M)
 	delete [] ia;
 }
 
-template <class Iter>
+template<class Iter>
 void
 test_one(unsigned N, unsigned M)
 {
@@ -97,7 +97,7 @@ test_one(unsigned N, unsigned M)
 	test_one_rng<Iter, typename sentinel_type<Iter>::type>(N, M);
 }
 
-template <class Iter>
+template<class Iter>
 void
 test(unsigned N)
 {
@@ -108,7 +108,7 @@ test(unsigned N)
 	test_one<Iter>(N, N);
 }
 
-template <class Iter>
+template<class Iter>
 void
 test()
 {

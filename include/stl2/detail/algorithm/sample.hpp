@@ -23,21 +23,21 @@
 
 STL2_OPEN_NAMESPACE {
 	namespace __sample {
-		template <class I, class S, class O, class Gen>
+		template<class I, class S, class O, class Gen>
 		concept bool constraint =
 			InputIterator<I> && Sentinel<S, I> && WeaklyIncrementable<O> &&
 			IndirectlyCopyable<I, O> &&
 			UniformRandomNumberGenerator<remove_reference_t<Gen>> &&
-			ConvertibleTo<result_of_t<Gen&()>, difference_type_t<I>>;
+			ConvertibleTo<result_of_t<Gen&()>, iter_difference_t<I>>;
 
-		template <class I, class S, class O, class Gen>
+		template<class I, class S, class O, class Gen>
 		requires
 			constraint<I, S, O, Gen>
 		tagged_pair<tag::in(I), tag::out(O)>
-		sized_impl(I first, S last, difference_type_t<I> pop_size,
-			O out, difference_type_t<I> n, Gen& gen)
+		sized_impl(I first, S last, iter_difference_t<I> pop_size,
+			O out, iter_difference_t<I> n, Gen& gen)
 		{
-			uniform_int_distribution<difference_type_t<I>> dist;
+			uniform_int_distribution<iter_difference_t<I>> dist;
 			using param_t = typename decltype(dist)::param_type;
 			if (n > pop_size) {
 				n = pop_size;
@@ -53,13 +53,13 @@ STL2_OPEN_NAMESPACE {
 		}
 	}
 
-	template <class I, class S, class O,
+	template<class I, class S, class O,
 		class Gen = detail::default_random_engine&>
 	requires
 		(ForwardIterator<I> || SizedSentinel<S, I>) &&
 		__sample::constraint<I, S, O, Gen>
 	tagged_pair<tag::in(I), tag::out(O)>
-	inline sample(I first, S last, O out, difference_type_t<I> n,
+	inline sample(I first, S last, O out, iter_difference_t<I> n,
 		Gen&& gen = detail::get_random_engine())
 	{
 		auto k = __stl2::distance(first, last);
@@ -67,25 +67,25 @@ STL2_OPEN_NAMESPACE {
 			k, std::move(out), n, gen);
 	}
 
-	template <class I, class S, RandomAccessIterator O,
+	template<class I, class S, RandomAccessIterator O,
 		class Gen = detail::default_random_engine&>
 	requires
 		!(ForwardIterator<I> || SizedSentinel<S, I>) &&
 		__sample::constraint<I, S, O, Gen>
 	tagged_pair<tag::in(I), tag::out(O)>
-	sample(I first, S last, O out, difference_type_t<I> n,
+	sample(I first, S last, O out, iter_difference_t<I> n,
 		Gen&& gen = detail::get_random_engine())
 	{
 		if (n <= 0) {
 			goto done;
 		}
-		for (difference_type_t<I> i = 0; i < n; (void)++i, ++first) {
+		for (iter_difference_t<I> i = 0; i < n; (void)++i, ++first) {
 			if (first == last) {
 				goto done;
 			}
 			out[i] = *first;
 		}
-		uniform_int_distribution<difference_type_t<I>> dist;
+		uniform_int_distribution<iter_difference_t<I>> dist;
 		using param_t = typename decltype(dist)::param_type;
 		for (auto pop_size = n; first != last; (void)++first, ++pop_size) {
 			auto const i = dist(gen, param_t{0, pop_size});
@@ -98,7 +98,7 @@ STL2_OPEN_NAMESPACE {
 		return {std::move(first), std::move(out)};
 	}
 
-	template <class I, class S, class ORng,
+	template<class I, class S, class ORng,
 		class Gen = detail::default_random_engine&>
 	requires
 		(ForwardIterator<I> || SizedSentinel<S, I>) &&
@@ -113,7 +113,7 @@ STL2_OPEN_NAMESPACE {
 			k, __stl2::begin(out), __stl2::distance(out), gen);
 	}
 
-	template <class I, class S, class ORng,
+	template<class I, class S, class ORng,
 		class Gen = detail::default_random_engine&>
 	requires
 		RandomAccessIterator<iterator_t<ORng>> &&
@@ -128,32 +128,32 @@ STL2_OPEN_NAMESPACE {
 			__stl2::begin(out), __stl2::distance(out), std::forward<Gen>(gen));
 	}
 
-	template <class Rng, RandomAccessIterator O,
+	template<class Rng, RandomAccessIterator O,
 		class Gen = detail::default_random_engine&>
 	requires
 		!(ForwardRange<Rng> || SizedRange<Rng>) &&
 		__sample::constraint<iterator_t<Rng>, sentinel_t<Rng>, O, Gen>
 	inline tagged_pair<tag::in(safe_iterator_t<Rng>), tag::out(O)>
-	sample(Rng&& rng, O out, difference_type_t<iterator_t<Rng>> n,
+	sample(Rng&& rng, O out, iter_difference_t<iterator_t<Rng>> n,
 		Gen&& gen = detail::get_random_engine())
 	{
 		return __stl2::sample(__stl2::begin(rng), __stl2::end(rng),
 			std::move(out), n, std::forward<Gen>(gen));
 	}
 
-	template <class Rng, class O, class Gen = detail::default_random_engine&>
+	template<class Rng, class O, class Gen = detail::default_random_engine&>
 	requires
 		(ForwardRange<Rng> || SizedRange<Rng>) &&
 		__sample::constraint<iterator_t<Rng>, sentinel_t<Rng>, O, Gen>
 	inline tagged_pair<tag::in(safe_iterator_t<Rng>), tag::out(O)>
-	sample(Rng&& rng, O out, difference_type_t<iterator_t<Rng>> n,
+	sample(Rng&& rng, O out, iter_difference_t<iterator_t<Rng>> n,
 		Gen&& gen = detail::get_random_engine())
 	{
 		return __sample::sized_impl(__stl2::begin(rng), __stl2::end(rng),
 			__stl2::distance(rng), std::move(out), n, std::forward<Gen>(gen));
 	}
 
-	template <class IRng, class ORng, class Gen = detail::default_random_engine&>
+	template<class IRng, class ORng, class Gen = detail::default_random_engine&>
 	requires
 		RandomAccessIterator<iterator_t<ORng>> &&
 		!(ForwardRange<IRng> || SizedRange<IRng>) &&
@@ -168,7 +168,7 @@ STL2_OPEN_NAMESPACE {
 			__stl2::begin(out), __stl2::distance(out), std::forward<Gen>(gen));
 	}
 
-	template <class IRng, class ORng, class Gen = detail::default_random_engine&>
+	template<class IRng, class ORng, class Gen = detail::default_random_engine&>
 	requires
 		(ForwardRange<IRng> || SizedRange<IRng>) &&
 		(ForwardRange<ORng> || SizedRange<ORng>) &&

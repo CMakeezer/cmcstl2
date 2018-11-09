@@ -19,13 +19,13 @@
 
 namespace ranges = __stl2;
 
-template <ranges::InputIterator I>
-	requires ranges::Regular<ranges::value_type_t<I>>
+template<ranges::InputIterator I>
+	requires ranges::Regular<ranges::iter_value_t<I>>
 class delimiter {
-	ranges::value_type_t<I> value_;
+	ranges::iter_value_t<I> value_;
 public:
 	delimiter() = default;
-	delimiter(ranges::value_type_t<I> value) :
+	delimiter(ranges::iter_value_t<I> value) :
 		value_{std::move(value)} {}
 
 	friend bool operator==(const delimiter& lhs, const delimiter& rhs) {
@@ -49,11 +49,11 @@ public:
 };
 
 STL2_OPEN_NAMESPACE {
-template <class I>
+template<class I>
 struct common_type<I, ::delimiter<I>> {
 	using type = common_iterator<I, ::delimiter<I>>;
 };
-template <class I>
+template<class I>
 	struct common_type<::delimiter<I>, I> {
 	using type = common_iterator<I, ::delimiter<I>>;
 };
@@ -89,7 +89,7 @@ int main()
 	{
 		char const *sz = "hello world";
 		char buf[50];
-		auto str = ranges::ext::subrange(sz, delimiter<const char*>{'\0'});
+		auto str = ranges::subrange(sz, delimiter<const char*>{'\0'});
 		{
 			std::fill_n(buf, sizeof(buf), '\0');
 			auto res3 = ranges::copy(str, buf);
@@ -112,7 +112,7 @@ int main()
 		int target[8]{};
 		auto l = {1,2,3,4,5,6};
 		CHECK(ranges::copy(std::move(l), target + 1).out() == target + 7);
-		check_equal(target, {0,1,2,3,4,5,6,0});
+		CHECK_EQUAL(target, {0,1,2,3,4,5,6,0});
 	}
 
 	return test_result();

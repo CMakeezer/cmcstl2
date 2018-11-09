@@ -18,7 +18,7 @@
 using namespace __stl2;
 
 namespace {
-	template <InputIterator I, Sentinel<I> S, OutputIterator<reference_t<I>> O>
+	template<InputIterator I, Sentinel<I> S, OutputIterator<iter_reference_t<I>> O>
 	tagged_pair<tag::in(I), tag::out(O)>
 	constexpr copy(I first, S last, O out) {
 		for (; first != last; ++first, void(), ++out) {
@@ -27,7 +27,7 @@ namespace {
 		return {first, out};
 	}
 
-	template <InputRange R, OutputIterator<reference_t<iterator_t<R>>> O>
+	template<InputRange R, OutputIterator<iter_reference_t<iterator_t<R>>> O>
 	constexpr tagged_pair<tag::in(safe_iterator_t<R>), tag::out(O)>
 	copy(R&& range, O out) {
 		return ::copy(__stl2::begin(range), __stl2::end(range), __stl2::move(out));
@@ -36,18 +36,18 @@ namespace {
 
 int main() {
 	using I = ostreambuf_iterator<char>;
-	static_assert(models::OutputIterator<I, const char&>);
-	static_assert(models::Sentinel<default_sentinel, I>);
-	static_assert(models::Common<I, default_sentinel>);
+	static_assert(OutputIterator<I, const char&>);
+	static_assert(Sentinel<default_sentinel, I>);
+	static_assert(Common<I, default_sentinel>);
 	static_assert(std::is_same<I, common_type_t<I, default_sentinel>>());
 
 	{
 		static const char hw[] = "Hello, world!";
-		auto hw_range = ext::subrange(__stl2::begin(hw), __stl2::end(hw) - 1);
+		auto hw_range = subrange(__stl2::begin(hw), __stl2::end(hw) - 1);
 		std::ostringstream os;
 		auto r = ::copy(hw_range, I{os});
 		CHECK(r.out() != default_sentinel{});
-		::check_equal(os.str(), hw_range);
+		CHECK_EQUAL(os.str(), hw_range);
 	}
 
 	return ::test_result();

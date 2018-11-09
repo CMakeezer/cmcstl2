@@ -29,7 +29,7 @@ STL2_OPEN_NAMESPACE {
 		class cursor;
 
 		struct access {
-			template <_SpecializationOf<cursor> C>
+			template<_SpecializationOf<cursor> C>
 			static constexpr decltype(auto) current(C&& c) noexcept {
 				return (std::forward<C>(c).current_);
 			}
@@ -41,8 +41,8 @@ STL2_OPEN_NAMESPACE {
 			I current_{};
 
 		public:
-			using difference_type = difference_type_t<I>;
-			using value_type = value_type_t<I>;
+			using difference_type = iter_difference_t<I>;
+			using value_type = iter_value_t<I>;
 
 			class mixin : protected basic_mixin<cursor> {
 				using base_t = basic_mixin<cursor>;
@@ -51,7 +51,7 @@ STL2_OPEN_NAMESPACE {
 				using difference_type = cursor::difference_type;
 				using value_type = cursor::value_type;
 				using iterator_category = iterator_category_t<I>;
-				using reference = reference_t<I>;
+				using reference = iter_reference_t<I>;
 				using pointer = I;
 
 				constexpr mixin() = default;
@@ -71,13 +71,13 @@ STL2_OPEN_NAMESPACE {
 			noexcept(is_nothrow_move_constructible<I>::value)
 			: current_{std::move(x)}
 			{}
-			template <ConvertibleTo<I> U>
+			template<ConvertibleTo<I> U>
 			constexpr cursor(const cursor<U>& u)
 			noexcept(is_nothrow_constructible<I, const U&>::value)
 			: current_{access::current(u)}
 			{}
 
-			constexpr reference_t<I> read() const
+			constexpr iter_reference_t<I> read() const
 			STL2_NOEXCEPT_RETURN(
 				*__stl2::prev(current_)
 			)
@@ -97,7 +97,7 @@ STL2_OPEN_NAMESPACE {
 				(void)++current_
 			)
 
-			constexpr void advance(difference_type_t<I> n)
+			constexpr void advance(iter_difference_t<I> n)
 			noexcept(noexcept(current_ -= n))
 			requires RandomAccessIterator<I>
 			{
@@ -110,7 +110,7 @@ STL2_OPEN_NAMESPACE {
 				current_ == access::current(that)
 			)
 
-			constexpr difference_type_t<I> distance_to(
+			constexpr iter_difference_t<I> distance_to(
 				const cursor<SizedSentinel<I> >& that) const
 			STL2_NOEXCEPT_RETURN(
 				-(access::current(that) - current_)
@@ -132,14 +132,9 @@ STL2_OPEN_NAMESPACE {
 		};
 	}
 
-	// Not to spec:
-	// * Customizes iter_move and iter_swap.
-	//   See https://github.com/ericniebler/stl2/issues/245.
-	// * constexpr per P0579
 	BidirectionalIterator{I}
 	using reverse_iterator = basic_iterator<__reverse_iterator::cursor<I>>;
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool operator<(
 		const reverse_iterator<I1>& x, const reverse_iterator<I2>& y)
@@ -148,7 +143,6 @@ STL2_OPEN_NAMESPACE {
 			__reverse_iterator::access::current(__stl2::get_cursor(y))
 	)
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool operator>(
 		const reverse_iterator<I1>& x, const reverse_iterator<I2>& y)
@@ -156,7 +150,6 @@ STL2_OPEN_NAMESPACE {
 		y < x
 	)
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool operator<=(
 		const reverse_iterator<I1>& x, const reverse_iterator<I2>& y)
@@ -164,7 +157,6 @@ STL2_OPEN_NAMESPACE {
 		!(y < x)
 	)
 
-	// Not to spec: constexpr per P0579
 	StrictTotallyOrderedWith{I1, I2}
 	constexpr bool operator>=(
 		const reverse_iterator<I1>& x, const reverse_iterator<I2>& y)
@@ -172,8 +164,7 @@ STL2_OPEN_NAMESPACE {
 		!(x < y)
 	)
 
-	// Not to spec: constexpr per P0579
-	template <class I>
+	template<class I>
 	requires BidirectionalIterator<__f<I>>
 	constexpr auto make_reverse_iterator(I&& i)
 	STL2_NOEXCEPT_RETURN(

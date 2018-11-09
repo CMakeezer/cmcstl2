@@ -18,9 +18,11 @@
 #include <stl2/memory.hpp>
 #include <stl2/utility.hpp>
 
-template <typename T>
+template<typename T>
 class raw_buffer {
 public:
+	using value_type = T;
+
 	~raw_buffer() {
 		if (data_) {
 			std::allocator<T>{}.deallocate(data_, size_);
@@ -82,7 +84,7 @@ private:
 	std::ptrdiff_t size_;
 };
 
-template <typename T>
+template<typename T>
 auto make_buffer(const std::size_t size) {
 	STL2_EXPECT(size <= static_cast<std::size_t>(PTRDIFF_MAX));
 	return raw_buffer<T>{static_cast<std::ptrdiff_t>(size)};
@@ -112,10 +114,10 @@ private:
 	std::int64_t isbn_{1248163264128-256};
 	double price_{16.64};
 	std::string title_{"The Lord of the Rings: The Ring Goes South"};
-	std::string author_{"J.R.R Tolkein"};
+	std::string author_{"J.R.R Tolkien"};
 };
 
-template <typename T>
+template<typename T>
 using Array = std::array<T, 8>;
 
 #endif // COMMON_HPP
